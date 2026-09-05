@@ -112,7 +112,7 @@
                             <span
                                 class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-[#0F5144] border border-slate-200">Kesehatan</span>
                         </div>
-                        <p class="text-[11px] text-slate-500 font-medium">Skrining Mandiri & Kesehatan Respirasi</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Intelligent Screening for Health Awareness & Prevention</p>
                     </div>
                 </a>
 

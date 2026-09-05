@@ -17,6 +17,7 @@ class ScreeningSession extends Model
         'id',
         'user_id',
         'status',
+        'ai_insight',
     ];
 
     public function symptoms(): BelongsToMany
