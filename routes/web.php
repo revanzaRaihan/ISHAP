@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\HomeController;
@@ -29,3 +30,10 @@ Route::get('/facilities', [FacilityController::class, 'index'])->name('facilitie
 
 // 4. Direktori Konsultasi Dokter Mitra Telemedika
 Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
+
+// Admin Area - Manajemen Pengetahuan AI
+Route::prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class,'showUploadForm'])->name('admin');
+    Route::get('/upload-medical-data', [App\Http\Controllers\AdminController::class, 'showUploadForm'])->name('admin.upload.form');
+    Route::post('/upload-medical-data', [App\Http\Controllers\AdminController::class, 'storeFromPdf'])->name('admin.upload.store');
+});

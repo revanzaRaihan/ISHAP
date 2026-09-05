@@ -54,4 +54,10 @@ return [
 
 
 
+    'anything_llm' => [
+        'url' => env('ANYTHING_LLM_URL'),
+        'key' => env('ANYTHING_LLM_API_KEY'),
+        'workspace' => env('ANYTHING_LLM_WORKSPACE'),
+    ],
+
 ];
