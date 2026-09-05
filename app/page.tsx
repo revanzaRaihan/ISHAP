@@ -15,10 +15,7 @@ export default function Home() {
           
           {/* Kolom Teks */}
           <div className="lg:col-span-7 space-y-8">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-950/5 text-[#0F5144] rounded-xl text-xs font-semibold border border-emerald-900/10">
-              <span className="w-2 h-2 rounded-full bg-[#0F5144]"></span>
-              Sistem Pencegahan ISPA Balikpapan
-            </span>
+         
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.15] tracking-tight">
               Intelligent Screening for <span className="text-[#0F5144]">Health Awareness</span> & Prevention
@@ -30,7 +27,7 @@ export default function Home() {
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
-                href="/skrining"
+                href="/screening"
                 className="bg-[#0F5144] hover:bg-[#0B3C32] text-white px-7 py-3.5 rounded-xl font-semibold text-base transition shadow-sm"
               >
                 Mulai Skrining Mandiri
