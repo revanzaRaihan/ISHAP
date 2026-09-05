@@ -1,36 +1,15 @@
-import React from "react";
-
-export const Footer: React.FC = () => {
+export default function Footer() {
   return (
-    <footer
-      style={{
-        borderTop: "1px solid var(--border-color)",
-        backgroundColor: "#ffffff",
-        padding: "36px 0",
-        color: "var(--text-secondary)",
-        fontSize: "0.875rem",
-      }}
-    >
-      <div
-        className="container"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <strong>ISHAP</strong> — Inisiatif Skrining Mandiri ISPA & Deteksi Dini
+    <footer className="bg-white border-t border-slate-100 py-12 text-slate-500 text-sm">
+      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+          <p className="font-bold text-slate-800 text-base">ISHAP</p>
+          <p className="text-xs text-slate-400 mt-1">Intelligent Screening for Health Awareness & Prevention</p>
         </div>
-        <p style={{ maxWidth: "720px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
-          Aplikasi ini adalah platform <strong>skrining mandiri risiko ISPA</strong>, bukan alat diagnosis resmi. Hasil penilaian tidak menggantikan saran, diagnosis, atau penanganan medis profesional dari dokter atau tenaga kesehatan berwenang.
-        </p>
-        <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-          &copy; {new Date().getFullYear()} ISHAP. Hak Cipta Dilindungi.
+        <p className="text-xs text-slate-400">
+          © 2026 ISHAP Balikpapan. Dibuat untuk kesadaran kesehatan masyarakat.
         </p>
       </div>
     </footer>
   );
-};
+}
