@@ -5,6 +5,8 @@ use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ScreeningController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AqiController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 // 1. Landing Page (Edukasi ISPA, Status Udara AQI, dan Alur Cepat)
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/api/aqi', [AqiController::class, 'getAqiByCoords']);
 
 // 2. Alur Skrining Mandiri ISPA
 Route::get('/screening', [ScreeningController::class, 'index'])->name('screening.index');

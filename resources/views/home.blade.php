@@ -1,230 +1,424 @@
 @extends('layouts.app')
 
-@section('title', 'ISHAP — Skrining Mandiri ISPA & Deteksi Dini Gejala Pernapasan')
+@section('title', 'ISHAP — Layanan Skrining Mandiri ISPA')
 
 @section('content')
-<!-- Hero Section -->
-<section class="relative overflow-hidden bg-gradient-to-b from-emerald-50/60 via-white to-slate-50 pt-12 pb-20 border-b border-slate-200/60">
-    <div class="absolute inset-0 hero-pattern pointer-events-none"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            <!-- Left Hero Content -->
-            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 text-emerald-800 text-xs font-semibold shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span>Sistem Skrining Mandiri ISPA Berbasis Algoritma Klinis</span>
-                </div>
 
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
-                    Deteksi Dini Gejala <br class="hidden sm:inline">
-                    <span class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                        Saluran Pernapasan
-                    </span> Secara Mandiri
-                </h1>
+    <section class="bg-white py-12 sm:py-16 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-                <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    Ketahui estimasi risiko kondisi ISPA Anda (batuk, radang tenggorokan, bronkitis, hingga pneumonia) secara cepat, aman, dan tanpa biaya. Dilengkapi penjelasan patogenesis kuman dan panduan penanganan awal.
-                </p>
+                <div class="lg:col-span-7 space-y-6">
 
-                <!-- CTA Buttons -->
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-                    <a href="{{ route('screening.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl shadow-emerald-600/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5 active:translate-y-0">
-                        <span>Mulai Skrining Sekarang</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
-                    <a href="{{ route('facilities.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl text-base font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 shadow-sm transition">
-                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>Cari Faskes Terdekat</span>
-                    </a>
-                </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug">
+                        Deteksi Dini & Skrining Mandiri Gejala Pernapasan (ISPA)
+                    </h1>
 
-                <!-- Stats summary -->
-                <div class="pt-6 border-t border-slate-200/80 grid grid-cols-3 gap-4 text-center lg:text-left">
-                    <div>
-                        <div class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ $symptomsCount }}+</div>
-                        <div class="text-xs text-slate-500 font-medium mt-0.5">Indikator Gejala Klinis</div>
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
+                        Evaluasi mandiri risiko gangguan saluran pernapasan seperti batuk, flu, bronkitis, hingga indikasi
+                        awal pneumonia secara cepat, aman, dan terstruktur.
+                    </p>
+
+
+                    <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                        <a href="{{ route('screening.index') }}"
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-sm font-semibold text-white bg-emerald-950 hover:bg-emerald-900 transition-colors shadow-sm">
+                            <span>Mulai Skrining Mandiri</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </a>
+                        <a href="{{ route('facilities.index') }}"
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded text-sm font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition-colors">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            </svg>
+                            <span>Cari Faskes Terdekat</span>
+                        </a>
                     </div>
-                    <div>
-                        <div class="text-2xl sm:text-3xl font-extrabold text-slate-900">5</div>
-                        <div class="text-xs text-slate-500 font-medium mt-0.5">Kondisi ISPA Terpetakan</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-600">100%</div>
-                        <div class="text-xs text-slate-500 font-medium mt-0.5">Akses Skrining Gratis</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Right Hero Card: Live AQI & Status Lingkungan -->
-            <div class="lg:col-span-5">
-                <div class="bg-white/95 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-200/80 backdrop-blur-sm relative overflow-hidden">
-                    <div class="flex items-center justify-between pb-5 border-b border-slate-100">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-3 h-3 rounded-full bg-emerald-500 badge-pulse"></div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Kualitas Udara</span>
+
+                    {{-- <div class="pt-6 border-t border-slate-100 grid grid-cols-3 gap-4 text-left">
+                        <div>
+                            <div class="text-lg font-extrabold text-slate-900">{{ $symptomsCount }}+</div>
+                            <div class="text-xs text-slate-500">Indikator Gejala</div>
                         </div>
-                        <span class="text-xs text-slate-400 font-medium">{{ $aqiData['location'] }}</span>
-                    </div>
-
-                    <!-- AQI Dial / Highlight -->
-                    <div class="py-6 text-center">
-                        <div class="inline-flex flex-col items-center justify-center w-32 h-32 rounded-full border-4 border-{{ $aqiData['color'] }}-400 bg-{{ $aqiData['color'] }}-50/60 shadow-inner mb-3">
-                            <span class="text-3xl font-extrabold text-slate-900">{{ $aqiData['aqi'] }}</span>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest">US AQI</span>
+                        <div>
+                            <div class="text-lg font-extrabold text-slate-900">5</div>
+                            <div class="text-xs text-slate-500">Kondisi Terdeteksi</div>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900">{{ $aqiData['status'] }}</h3>
-                        <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-                            PM2.5: <span class="font-semibold text-slate-700">{{ $aqiData['pm25'] }} µg/m³</span> &bull; 
-                            PM10: <span class="font-semibold text-slate-700">{{ $aqiData['pm10'] }} µg/m³</span>
-                        </p>
-                    </div>
+                        <div>
+                            <div class="text-lg font-extrabold text-emerald-950">100%</div>
+                            <div class="text-xs text-slate-500">Akses Tanpa Biaya</div>
+                        </div>
+                    </div> --}}
+                </div>
 
-                    <!-- Health advisory box -->
-                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
-                        <strong class="text-slate-800 block mb-1">Saran Pencegahan Respirasi:</strong>
-                        {{ $aqiData['recommendation'] }}
-                    </div>
 
-                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                        <span>Sumber: Open-Meteo & BMKG</span>
-                        <a href="{{ route('screening.index') }}" class="font-semibold text-emerald-600 hover:text-emerald-700">Periksa Gejala Anda &rarr;</a>
+                <div class="lg:col-span-5">
+                    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <span id="aqi-indicator"
+                                    class="w-2.5 h-2.5 rounded-full bg-slate-300 transition-colors duration-300"></span>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pemantauan Kualitas
+                                    Udara</span>
+                            </div>
+                            <div
+                                class="flex items-center gap-1.5 text-xs text-slate-500 font-medium bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span id="aqi-location">Mendeteksi lokasi...</span>
+                            </div>
+                        </div>
+
+                        <!-- Body Main Info -->
+                        <div class="py-5 flex items-center justify-between gap-4">
+                            <div>
+                                <div class="text-4xl font-black tracking-tight text-slate-900">
+                                    <span id="aqi-value">-</span>
+                                    <span class="text-xs font-semibold text-slate-400 tracking-normal">US AQI</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span id="aqi-status"
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                        Memuat...
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Particle Indicators -->
+                            <div class="grid grid-cols-2 gap-2 text-right">
+                                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">PM
+                                        2.5</span>
+                                    <span class="text-xs font-bold text-slate-800">
+                                        <span id="aqi-pm25">-</span> <span
+                                            class="text-[10px] font-normal text-slate-500">µg/m³</span>
+                                    </span>
+                                </div>
+                                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">PM
+                                        10</span>
+                                    <span class="text-xs font-bold text-slate-800">
+                                        <span id="aqi-pm10">-</span> <span
+                                            class="text-[10px] font-normal text-slate-500">µg/m³</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Anjuran Medis -->
+                        <div
+                            class="p-3.5 bg-slate-50/80 border border-slate-200/80 rounded-lg text-xs leading-relaxed mb-4">
+                            <div class="flex items-center gap-1.5 font-bold text-slate-900 mb-1">
+                                <svg class="w-4 h-4 text-[#0F5144]" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Anjuran Pencegahan Medis</span>
+                            </div>
+                            <p id="aqi-recommendation" class="text-slate-600 pl-5">
+                                Mencari akses lokasi perangkat Anda...
+                            </p>
+                        </div>
+
+                        <!-- Footer Info -->
+                        <div
+                            class="flex items-center justify-between text-[11px] text-slate-400 pt-3 border-t border-slate-100">
+                            <span>Sumber: WAQI Real-time</span>
+                            <a href="{{ route('screening.index') }}"
+                                class="inline-flex items-center gap-1 font-semibold text-[#0F5144] hover:text-slate-900 transition-colors">
+                                <span>Periksa Gejala</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                @push('scripts')
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const elLocation = document.getElementById("aqi-location");
+                            const elValue = document.getElementById("aqi-value");
+                            const elStatus = document.getElementById("aqi-status");
+                            const elPm25 = document.getElementById("aqi-pm25");
+                            const elPm10 = document.getElementById("aqi-pm10");
+                            const elRecommendation = document.getElementById("aqi-recommendation");
+                            const elIndicator = document.getElementById("aqi-indicator");
+
+                            function setEmptyState(msg) {
+                                elLocation.textContent = "Akses Lokasi Ditolak";
+                                elValue.textContent = "-";
+                                elStatus.textContent = "Tidak Ada Data";
+                                elStatus.className =
+                                    "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200";
+                                elPm25.textContent = "-";
+                                elPm10.textContent = "-";
+                                elRecommendation.textContent = msg ||
+                                    "Izinkan akses lokasi pada browser Anda untuk melihat pemantauan indeks kualitas udara setempat.";
+                                elIndicator.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
+                            }
+
+                            if ("geolocation" in navigator) {
+                                navigator.geolocation.getCurrentPosition(
+                                    async (pos) => {
+                                            try {
+                                                const res = await fetch(
+                                                    `/api/aqi?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
+                                                const json = await res.json();
+
+                                                if (json.success && json.data) {
+                                                    const data = json.data;
+                                                    const aqi = data.aqi;
+
+                                                    elLocation.textContent = data.city.name || "Lokasi Terdeteksi";
+                                                    elValue.textContent = aqi;
+                                                    elPm25.textContent = data.iaqi?.pm25?.v ?? "-";
+                                                    elPm10.textContent = data.iaqi?.pm10?.v ?? "-";
+
+                                                    // Update Status & Colors
+                                                    if (aqi <= 50) {
+                                                        elStatus.textContent = "Baik";
+                                                        elStatus.className =
+                                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200";
+                                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-600";
+                                                        elRecommendation.textContent =
+                                                            "Kualitas udara sangat baik. Aman untuk beraktivitas di luar ruangan tanpa masker.";
+                                                    } else if (aqi <= 100) {
+                                                        elStatus.textContent = "Sedang";
+                                                        elStatus.className =
+                                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-900 border border-yellow-200";
+                                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-yellow-500";
+                                                        elRecommendation.textContent =
+                                                            "Kualitas udara relatif aman. Kelompok sensitif disarankan mengurangi aktivitas luar ruangan berlebih.";
+                                                    } else {
+                                                        elStatus.textContent = "Tidak Sehat";
+                                                        elStatus.className =
+                                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-900 border border-rose-200";
+                                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-rose-600";
+                                                        elRecommendation.textContent =
+                                                            "Gunakan masker medis saat beraktivitas di luar rumah untuk mencegah risiko iritasi saluran pernapasan.";
+                                                    }
+                                                } else {
+                                                    setEmptyState("Gagal mengambil data dari stasiun WAQI.");
+                                                }
+                                            } catch (e) {
+                                                setEmptyState("Koneksi server terganggu.");
+                                            }
+                                        },
+                                        () => setEmptyState("Akses lokasi tidak diizinkan oleh pengguna."), {
+                                            timeout: 8000
+                                        }
+                                );
+                            } else {
+                                setEmptyState("Browser tidak mendukung geolocation.");
+                            }
+                        });
+                    </script>
+                @endpush
+
+
+            </div>
+        </div>
+    </section>
+
+
+    <section class="py-12 bg-slate-50/60 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mb-8">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-950 mb-1">Edukasi Medis</h2>
+                <h3 class="text-2xl font-bold text-slate-900">Klasifikasi Infeksi Saluran Pernapasan Akut</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Saluran Atas -->
+                <div class="bg-white p-6 rounded border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span
+                            class="w-7 h-7 rounded bg-slate-100 text-slate-800 font-bold text-xs flex items-center justify-center border border-slate-300">1</span>
+                        <div>
+                            <h4 class="text-base font-bold text-slate-900">ISPA Saluran Napas Atas</h4>
+                            <span class="text-[11px] font-medium text-slate-600">Umumnya Ringan (Hidung, Faring,
+                                Laring)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Infeksi pada bagian atas saluran pernapasan. Sebagian besar dipicu oleh virus dan dapat membaik
+                        dengan penanganan mandiri yang tepat.
+                    </p>
+                    <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+                        <div><strong>Contoh:</strong> Batuk pilek biasa, Faringitis (Radang tenggorokan), Sinusitis.</div>
+                        <div><strong>Gejala Utama:</strong> Hidung tersumbat, bersin, tenggorokan perih, demam ringan.</div>
+                    </div>
+                </div>
+
+                <!-- Saluran Bawah -->
+                <div class="bg-white p-6 rounded border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span
+                            class="w-7 h-7 rounded bg-emerald-950 text-white font-bold text-xs flex items-center justify-center">2</span>
+                        <div>
+                            <h4 class="text-base font-bold text-slate-900">ISPA Saluran Napas Bawah</h4>
+                            <span class="text-[11px] font-medium text-slate-600">Perhatian Medis Khusus (Bronkus,
+                                Paru)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Infeksi pada jaringan paru-paru dan saluran napas bawah. Memerlukan perhatian lebih karena dapat
+                        mengganggu masuknya oksigen.
+                    </p>
+                    <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+                        <div><strong>Contoh:</strong> Bronkitis Akut, Pneumonia (Radang Paru).</div>
+                        <div><strong>Gejala Utama:</strong> Batuk berdahak kental, sesak napas, nyeri dada saat bernapas.
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Edukasi ISPA Section -->
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-2">Edukasi Kesehatan Pernapasan</h2>
-            <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Memahami Klasifikasi ISPA: Saluran Atas vs Bawah</p>
-            <p class="text-slate-600 mt-4 leading-relaxed text-sm sm:text-base">
-                Infeksi Saluran Pernapasan Akut dibedakan berdasarkan lokasi anatomi organ yang diserang. Mengetahui letaknya penting untuk menentukan tingkat kegawatan.
-            </p>
-        </div>
+    <!-- Langkah Alur Skrining -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mb-8">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-950 mb-1">Alur Pelayanan</h2>
+                <h3 class="text-2xl font-bold text-slate-900">Prosedur Skrining Mandiri</h3>
+            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Saluran Napas Atas Card -->
-            <div class="p-8 rounded-3xl bg-gradient-to-br from-emerald-50/50 to-teal-50/30 border border-emerald-100 shadow-sm hover:shadow-md transition">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-emerald-600/20">
-                        1
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900">ISPA Saluran Napas Atas</h3>
-                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Umumnya Ringan (Self-Limiting)</span>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-5 rounded border border-slate-200 bg-white">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Langkah 01</div>
+                    <h4 class="text-sm font-bold text-slate-900 mb-1">Pilih Indikator Gejala</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Tandai gejala yang dirasakan saat ini pada lembar checklist interaktif.
+                    </p>
                 </div>
-                <p class="text-sm text-slate-600 leading-relaxed mb-5">
-                    Meliputi organ hidung, sinus, faring, dan laring. Sebagian besar dipicu oleh virus flu musiman yang sembuh dengan sendirinya dalam 7–10 hari jika istirahat terpenuhi.
-                </p>
-                <div class="space-y-2.5 text-xs text-slate-700">
-                    <div class="flex items-center gap-2">
-                        <span class="text-emerald-600 font-bold">&check;</span>
-                        <span><strong>Contoh:</strong> Batuk pilek biasa (Common Cold), Radang Tenggorokan (Faringitis), Sinusitis</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-emerald-600 font-bold">&check;</span>
-                        <span><strong>Gejala Khas:</strong> Hidung tersumbat, bersin-bersin, tenggorokan gatal/perih, demam ringan</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-emerald-600 font-bold">&check;</span>
-                        <span><strong>Penanganan:</strong> Hidrasi tinggi, istirahat, kumur air garam, obat pereda gejala simptomatis</span>
-                    </div>
+
+                <div class="p-5 rounded border border-slate-200 bg-white">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Langkah 02</div>
+                    <h4 class="text-sm font-bold text-slate-900 mb-1">Kalkulasi Otomatis</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Sistem menganalisis tingkat kecocokan gejala dengan pola klinis ISPA.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded border border-slate-200 bg-white">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Langkah 03</div>
+                    <h4 class="text-sm font-bold text-slate-900 mb-1">Hasil & Panduan Medis</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Dapatkan estimasi kondisi, saran penanganan awal, serta rujukan faskes.
+                    </p>
                 </div>
             </div>
 
-            <!-- Saluran Napas Bawah Card -->
-            <div class="p-8 rounded-3xl bg-gradient-to-br from-amber-50/50 to-rose-50/30 border border-amber-200/80 shadow-sm hover:shadow-md transition">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-amber-600/20">
-                        2
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900">ISPA Saluran Napas Bawah</h3>
-                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800">Perhatian Khusus / Potensi Gawat</span>
-                    </div>
+            <!-- Banner Aksi Bawah Minimalis -->
+            <div
+                class="mt-8 p-6 rounded border border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <h4 class="text-base font-bold text-slate-900">Mulai Skrining Kesehatan Pernapasan</h4>
+                    <p class="text-xs text-slate-600 mt-0.5">Proses cepat, tidak berbayar, dan tanpa perlu mendaftar akun.
+                    </p>
                 </div>
-                <p class="text-sm text-slate-600 leading-relaxed mb-5">
-                    Meliputi trakea, bronkus, dan kantung udara paru (alveoli). Infeksi di area ini dapat mengganggu pertukaran oksigen tubuh dan memerlukan evaluasi medis.
-                </p>
-                <div class="space-y-2.5 text-xs text-slate-700">
-                    <div class="flex items-center gap-2">
-                        <span class="text-amber-600 font-bold">&check;</span>
-                        <span><strong>Contoh:</strong> Bronkitis Akut, Pneumonia (Radang Paru), Serangan Eksaserbasi Asma</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-amber-600 font-bold">&check;</span>
-                        <span><strong>Gejala Khas:</strong> Batuk berdahak kental, sesak napas, nyeri dada saat bernapas, suara mengi</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-amber-600 font-bold">&check;</span>
-                        <span><strong>Penanganan:</strong> Konsultasi dokter segera, pemeriksaan saturasi oksigen, antibiotik jika ada infeksi bakteri</span>
-                    </div>
-                </div>
+                <a href="{{ route('screening.index') }}"
+                    class="px-5 py-2.5 rounded text-xs font-semibold text-white bg-emerald-950 hover:bg-emerald-900 transition-colors whitespace-nowrap">
+                    Mulai Skrining Sekarang &rarr;
+                </a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- 3 Langkah Alur Skrining -->
-<section class="py-20 bg-slate-50 border-y border-slate-200/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-2">Proses Skrining Mudah</h2>
-            <p class="text-3xl font-extrabold text-slate-900 tracking-tight">Hanya Butuh Waktu 2 Menit</p>
-            <p class="text-slate-600 mt-2 text-sm">Alur terstruktur tanpa perlu mendaftar atau memasukkan data pribadi sensitif.</p>
-        </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const elLocation = document.getElementById("aqi-location");
+            const elValue = document.getElementById("aqi-value");
+            const elStatus = document.getElementById("aqi-status");
+            const elPm25 = document.getElementById("aqi-pm25");
+            const elPm10 = document.getElementById("aqi-pm10");
+            const elRecommendation = document.getElementById("aqi-recommendation");
+            const elIndicator = document.getElementById("aqi-indicator");
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm relative">
-                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 font-extrabold flex items-center justify-center mb-4">
-                    1
-                </div>
-                <h4 class="text-base font-bold text-slate-900 mb-2">Pilih Gejala yang Dirasakan</h4>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Centang gejala yang sedang Anda alami dalam checklist interaktif (batuk, demam, sesak, tenggorokan).
-                </p>
-            </div>
+            function setEmptyState(msg) {
+                elLocation.textContent = "Akses Lokasi Ditolak";
+                elValue.textContent = "-";
+                elStatus.textContent = "Tidak Ada Data";
+                elStatus.className =
+                    "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200";
+                elPm25.textContent = "-";
+                elPm10.textContent = "-";
+                elRecommendation.textContent = msg ||
+                    "Izinkan akses lokasi pada browser Anda untuk melihat pemantauan indeks kualitas udara setempat.";
+                elIndicator.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
+            }
 
-            <div class="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm relative">
-                <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 font-extrabold flex items-center justify-center mb-4">
-                    2
-                </div>
-                <h4 class="text-base font-bold text-slate-900 mb-2">Kalkulasi Perkiraan Risiko</h4>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Algoritma scoring otomatis menghitung persentase kecocokan terhadap pola klinis ISPA tanpa bias.
-                </p>
-            </div>
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    async (pos) => {
+                            try {
+                                const res = await fetch(
+                                    `/api/aqi?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
+                                const json = await res.json();
 
-            <div class="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm relative">
-                <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-700 font-extrabold flex items-center justify-center mb-4">
-                    3
-                </div>
-                <h4 class="text-base font-bold text-slate-900 mb-2">Edukasi & Rekomendasi Faskes</h4>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Dapatkan penjelasan patogenesis kuman, tips mandiri di rumah, serta rujukan fasilitas kesehatan terdekat.
-                </p>
-            </div>
-        </div>
+                                if (json.success && json.data) {
+                                    const data = json.data;
+                                    const aqi = data.aqi;
 
-        <!-- Banner CTA -->
-        <div class="mt-14 text-center">
-            <a href="{{ route('screening.index') }}" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl shadow-emerald-600/25 transition-all transform hover:-translate-y-0.5">
-                <span>Mulai Skrining Mandiri Sekarang &rarr;</span>
-            </a>
-        </div>
-    </div>
-</section>
+                                    elLocation.textContent = data.city.name || "Lokasi Terdeteksi";
+                                    elValue.textContent = aqi;
+                                    elPm25.textContent = data.iaqi?.pm25?.v ?? "-";
+                                    elPm10.textContent = data.iaqi?.pm10?.v ?? "-";
+
+                                    
+                                    if (aqi <= 50) {
+                                        elStatus.textContent = "Baik";
+                                        elStatus.className =
+                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200";
+                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-600";
+                                        elRecommendation.textContent =
+                                            "Kualitas udara sangat baik. Aman untuk beraktivitas di luar ruangan tanpa masker.";
+                                    } else if (aqi <= 100) {
+                                        elStatus.textContent = "Sedang";
+                                        elStatus.className =
+                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-900 border border-yellow-200";
+                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-yellow-500";
+                                        elRecommendation.textContent =
+                                            "Kualitas udara relatif aman. Kelompok sensitif disarankan mengurangi aktivitas luar ruangan berlebih.";
+                                    } else {
+                                        elStatus.textContent = "Tidak Sehat";
+                                        elStatus.className =
+                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-900 border border-rose-200";
+                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-rose-600";
+                                        elRecommendation.textContent =
+                                            "Gunakan masker medis saat beraktivitas di luar rumah untuk mencegah risiko iritasi saluran pernapasan.";
+                                    }
+                                } else {
+                                    setEmptyState("Gagal mengambil data dari stasiun WAQI.");
+                                }
+                            } catch (e) {
+                                setEmptyState("Koneksi server terganggu.");
+                            }
+                        },
+                        () => setEmptyState("Akses lokasi tidak diizinkan oleh pengguna."), {
+                            timeout: 8000
+                        }
+                );
+            } else {
+                setEmptyState("Browser tidak mendukung geolocation.");
+            }
+        });
+    </script>
+
 @endsection

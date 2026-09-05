@@ -41,4 +41,8 @@ return [
         'service_role_key' => env('SUPABASE_SERVICE_ROLE_KEY'),
     ],
 
+    'waqi' => [
+    'token' => env('WAQI_API_TOKEN'),
+],
+
 ];
