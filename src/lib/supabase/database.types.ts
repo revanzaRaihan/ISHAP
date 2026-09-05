@@ -165,54 +165,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      health_facilities: {
-        Row: {
-          id: string;
-          name: string;
-          type: string | null;
-          address: string | null;
-          latitude: number | null;
-          longitude: number | null;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          type?: string | null;
-          address?: string | null;
-          latitude?: number | null;
-          longitude?: number | null;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          type?: string | null;
-          address?: string | null;
-          latitude?: number | null;
-          longitude?: number | null;
-        };
-        Relationships: [];
-      };
-      facility_recommendations: {
-        Row: {
-          id: string;
-          session_id: string;
-          facility_id: string;
-          distance_km: number | null;
-        };
-        Insert: {
-          id?: string;
-          session_id: string;
-          facility_id: string;
-          distance_km?: number | null;
-        };
-        Update: {
-          id?: string;
-          session_id?: string;
-          facility_id?: string;
-          distance_km?: number | null;
-        };
-        Relationships: [];
-      };
       online_doctor_profiles: {
         Row: {
           id: string;

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 bg-[#F7FAF9]/90 backdrop-blur-md border-b border-slate-200/60">
+    <header className="sticky top-0 z-50 bg-bg-app/90 backdrop-blur-md border-b border-slate-200/60">
       <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-[#0F5144] rounded-xl flex items-center justify-center text-white shadow-sm">
@@ -18,21 +18,45 @@ export default function Navbar() {
             <span className="font-extrabold text-xl text-slate-800 tracking-tight block leading-none">
               I-SHAP
             </span>
-            <span className="text-[10px] text-[#168A70] font-semibold tracking-wider uppercase">
+            <span className="text-[10px] text-primary-health font-semibold tracking-wider uppercase">
               Health Screening
             </span>
           </div>
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-          <Link href="#fitur" className="hover:text-[#168A70] transition">Fitur</Link>
-          <Link href="#aqi" className="hover:text-[#168A70] transition">Kualitas Udara</Link>
-          <Link href="#edukasi" className="hover:text-[#168A70] transition">Edukasi ISPA</Link>
+        <nav style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <Link
+            href="/"
+            style={{
+              fontSize: "0.95rem",
+              fontWeight: 600,
+              color: "var(--text-secondary)",
+            }}
+          >
+            Beranda & AQI
+          </Link>
+          <Link
+            href="/facilities"
+            style={{
+              fontSize: "0.95rem",
+              fontWeight: 600,
+              color: "var(--text-secondary)",
+            }}
+          >
+            Faskes Terdekat
+          </Link>
+          <Link
+            href="/screening"
+            className="btn btn-primary"
+            style={{ padding: "8px 18px", fontSize: "0.9rem" }}
+          >
+            Mulai Skrining
+          </Link>
         </nav>
 
         <Link
-          href="/skrining"
-          className="bg-[#168A70] hover:bg-[#12705B] text-white px-5 py-2.5 rounded-2xl font-semibold text-sm transition shadow-sm"
+          href="/screening"
+          className="bg-primary-health hover:bg-primary-hover text-white px-5 py-2.5 rounded-2xl font-semibold text-sm transition shadow-sm"
         >
           Mulai Skrining
         </Link>

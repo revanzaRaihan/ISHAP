@@ -14,12 +14,13 @@ export const facilityService = {
   async getNearbyFacilities(
     lat: number,
     long: number,
-    limit: number = 5
+    limit: number = 8,
+    radiusKm: number = 25
   ): Promise<NearbyFacilitiesResponse> {
     const res = await fetch(
       `/api/facilities/nearby?lat=${encodeURIComponent(lat)}&long=${encodeURIComponent(
         long
-      )}&limit=${limit}`
+      )}&limit=${limit}&radius_km=${radiusKm}`
     );
 
     if (!res.ok) {
