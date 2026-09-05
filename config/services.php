@@ -41,10 +41,4 @@ return [
         'service_role_key' => env('SUPABASE_SERVICE_ROLE_KEY'),
     ],
 
-    'gemini' => [
-        'api_key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
-        'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
-    ],
-
 ];
