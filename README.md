@@ -25,7 +25,8 @@
 ## 🛠️ Dokumentasi Tech Stack Lengkap
 
 Daftar lengkap teknologi, pustaka, API, dan arsitektur sistem dapat dibaca di:
-👉 **[Dokumentasi Tech Stack (docs/TECH_STACK.md)](docs/TECH_STACK.md)**
+👉 **[Dokumentasi Tech Stack (docs/TECH_STACK.md)](docs/TECH_STACK.md)**  
+👉 **[Bedah Direktori Kode & Alur Hubungan File (docs/ARCHITECTURE_BREAKDOWN.md)](docs/ARCHITECTURE_BREAKDOWN.md)**
 
 Ringkasan cepat:
 - **Backend**: Laravel 11.x (PHP 8.3 / 8.2+)

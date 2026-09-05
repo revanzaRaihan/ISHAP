@@ -67,3 +67,7 @@ Daftar teknologi dan layanan yang digunakan di proyek **ISHAP (Intelligent Scree
    Sistem simulasi respons API eksternal (Gemini, OSM, Open-Meteo) agar pengujian aplikasi dapat berjalan cepat dan tanpa bergantung pada koneksi internet.
 3. **Laravel Pint**
    Linter dan formatter kode otomatis agar susunan kode tetap rapi dan konsisten sesuai standar PSR-12.
+
+---
+
+📖 *Untuk penjelasan rinci mengenai isi masing-masing berkas, fungsi inti, dan keterkaitannya (Model, Controller, View, Service), silakan baca: **[Bedah Arsitektur & Direktori Kode (docs/ARCHITECTURE_BREAKDOWN.md)](ARCHITECTURE_BREAKDOWN.md)**.*
