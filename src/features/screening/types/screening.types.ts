@@ -26,6 +26,7 @@ export interface ScreeningResult {
   session_id: string;
   disease_id: string;
   disease_name?: string;
+  disease_description?: string | null;
   severity_level?: string | null;
   confidence_score: number;
   reasoning: string | null;

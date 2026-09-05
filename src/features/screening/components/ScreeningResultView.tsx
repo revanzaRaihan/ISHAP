@@ -8,6 +8,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
+import { EducationalTips } from "./EducationalTips";
+
 interface Props {
   sessionId: string;
 }
@@ -61,9 +63,14 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
     );
   }
 
+  // Ambil hanya 1 hasil yang paling mendekati dengan skor kecocokan tertinggi
+  const topResult = data.results && data.results.length > 0 ? data.results[0] : null;
+  const isHighRisk = topResult ? topResult.confidence_score >= 60 : false;
+  const badgeVariant = isHighRisk ? "warning" : "info";
+
   return (
     <div style={{ maxWidth: "840px", margin: "0 auto" }}>
-      <div style={{ marginBottom: "32px", textAlign: "center" }}>
+      <div style={{ marginBottom: "28px", textAlign: "center" }}>
         <Badge variant="success" style={{ marginBottom: "12px" }}>
           Skrining Selesai Diproses
         </Badge>
@@ -71,7 +78,7 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
           Perkiraan Risiko Gejala ISPA
         </h1>
         <p style={{ color: "var(--text-secondary)", marginTop: "8px" }}>
-          Berikut adalah hasil evaluasi awal berdasarkan indikator gejala yang Anda masukkan.
+          Berdasarkan seleksi gejala yang Anda masukkan, berikut adalah indikator kondisi yang paling mendekati.
         </p>
       </div>
 
@@ -82,7 +89,7 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
           backgroundColor: "var(--accent-amber-light)",
           borderLeft: "4px solid var(--accent-amber)",
           borderRadius: "var(--radius-sm)",
-          marginBottom: "28px",
+          marginBottom: "24px",
           fontSize: "0.875rem",
           color: "#78350f",
           lineHeight: 1.5,
@@ -91,88 +98,117 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
         <strong>Pernyataan Medis Penting:</strong> {data.disclaimer}
       </div>
 
-      {/* Results List */}
-      <div style={{ display: "grid", gap: "16px", marginBottom: "36px" }}>
-        {data.results.length === 0 ? (
-          <Card style={{ textAlign: "center", padding: "36px" }}>
-            <p style={{ color: "var(--text-secondary)" }}>
-              Tidak teridentifikasi indikator risiko spesifik pada pola gejala yang dimasukkan. Jika keluhan berlanjut, harap periksakan diri ke dokter.
-            </p>
-          </Card>
-        ) : (
-          data.results.map((result) => {
-            const isHighRisk = result.confidence_score >= 60;
-            const badgeVariant = isHighRisk ? "warning" : "info";
+      {/* Kartu Utama: 1 Hasil Skrining Paling Mendekati */}
+      {!topResult ? (
+        <Card style={{ textAlign: "center", padding: "40px 24px" }}>
+          <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "12px" }}>🩺</span>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "8px" }}>
+            Pola Gejala Tidak Mengarah ke Kondisi Spesifik
+          </h3>
+          <p style={{ color: "var(--text-secondary)", maxWidth: "500px", margin: "0 auto 20px auto" }}>
+            Gejala yang Anda pilih belum menunjukkan pola spesifik ISPA pada sistem skrining mandiri kami. Tetap jaga kondisi tubuh dan periksakan ke dokter jika keluhan menetap.
+          </p>
+          <Link href="/screening">
+            <Button variant="secondary">Coba Skrining Ulang</Button>
+          </Link>
+        </Card>
+      ) : (
+        <Card style={{ padding: "28px", border: "1.5px solid var(--border-color)" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              flexWrap: "wrap",
+              gap: "12px",
+              marginBottom: "16px",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: "0.8rem",
+                  color: "var(--text-muted)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  fontWeight: 600,
+                  display: "block",
+                  marginBottom: "4px",
+                }}
+              >
+                Kondisi Paling Mendekati Gejala
+              </span>
+              <h2 style={{ fontSize: "1.6rem", fontWeight: 800 }}>
+                {topResult.disease_name}
+              </h2>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              {topResult.severity_level && (
+                <Badge variant={topResult.severity_level === "berat" ? "danger" : topResult.severity_level === "sedang" ? "warning" : "info"}>
+                  Tingkat {topResult.severity_level}
+                </Badge>
+              )}
+              <Badge variant={badgeVariant}>
+                Kecocokan: {topResult.confidence_score}%
+              </Badge>
+            </div>
+          </div>
 
-            return (
-              <Card key={result.id} style={{ padding: "24px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: "12px",
-                  }}
-                >
-                  <div>
-                    <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>
-                      {result.disease_name}
-                    </h3>
-                    {result.severity_level && (
-                      <span
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--text-muted)",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.05em",
-                        }}
-                      >
-                        Tingkat Keparahan: {result.severity_level}
-                      </span>
-                    )}
-                  </div>
-                  <Badge variant={badgeVariant}>
-                    Estimasi Kecocokan: {result.confidence_score}%
-                  </Badge>
-                </div>
+          <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.6, marginBottom: "20px" }}>
+            {topResult.reasoning}
+          </p>
 
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
-                  {result.reasoning}
-                </p>
+          {/* Visual Progress Bar Kecocokan */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "6px" }}>
+              <span>Tingkat Estimasi Risiko</span>
+              <span><strong>{topResult.confidence_score}%</strong> kecocokan pola gejala</span>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                height: "10px",
+                backgroundColor: "var(--border-color)",
+                borderRadius: "5px",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  width: `${Math.min(topResult.confidence_score, 100)}%`,
+                  height: "100%",
+                  backgroundColor:
+                    topResult.severity_level === "berat"
+                      ? "var(--accent-red)"
+                      : isHighRisk
+                      ? "var(--accent-amber)"
+                      : "var(--primary)",
+                  borderRadius: "5px",
+                  transition: "width 0.5s ease-in-out",
+                }}
+              />
+            </div>
+          </div>
+        </Card>
+      )}
 
-                {/* Visual Progress Bar */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "8px",
-                    backgroundColor: "var(--border-color)",
-                    borderRadius: "4px",
-                    overflow: "hidden",
-                    marginTop: "16px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${Math.min(result.confidence_score, 100)}%`,
-                      height: "100%",
-                      backgroundColor: isHighRisk ? "var(--accent-amber)" : "var(--primary)",
-                      borderRadius: "4px",
-                    }}
-                  />
-                </div>
-              </Card>
-            );
-          })
-        )}
-      </div>
+      {/* Komponen Penjelasan Penyebab Penyakit & Tips Pencegahan */}
+      {topResult && (
+        <EducationalTips
+          severityLevel={topResult.severity_level}
+          diseaseName={topResult.disease_name}
+          diseaseDescription={topResult.disease_description}
+        />
+      )}
 
-      {/* Tindakan Lanjutan & Rujukan */}
+      {/* Tindakan Lanjutan & Rujukan Faskes / Dokter */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: "16px",
-          marginBottom: "40px",
+          marginTop: "28px",
+          marginBottom: "36px",
         }}
       >
         <Card style={{ padding: "24px" }}>
@@ -180,7 +216,7 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
             🏥 Fasilitas Kesehatan Terdekat
           </h4>
           <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "16px" }}>
-            Temukan Puskesmas atau Rumah Sakit terdekat di sekitar lokasi Anda untuk pemeriksaan fisik langsung.
+            Cari Puskesmas, Klinik, atau Rumah Sakit terdekat di sekitar lokasi Anda untuk pemeriksaan fisik.
           </p>
           <Link href={`/facilities?session=${sessionId}`}>
             <Button variant="secondary" size="sm" style={{ width: "100%" }}>
@@ -194,7 +230,7 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
             👨‍⚕️ Konsultasi Dokter Online
           </h4>
           <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "16px" }}>
-            Hubungi dokter umum atau spesialis paru secara daring melalui platform mitra terpercaya.
+            Hubungi dokter umum atau spesialis paru secara daring untuk konsultasi dan resep pengobatan.
           </p>
           <Link href={`/consultation?session=${sessionId}`}>
             <Button variant="primary" size="sm" style={{ width: "100%" }}>
@@ -204,7 +240,7 @@ export const ScreeningResultView: React.FC<Props> = ({ sessionId }) => {
         </Card>
       </div>
 
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "center", marginBottom: "40px" }}>
         <Link href="/screening">
           <Button variant="secondary">Mulai Skrining Baru</Button>
         </Link>

@@ -16,7 +16,7 @@ Dokumen ini mencatat seluruh status perkembangan fitur, pemenuhan arsitektur, ca
 | **API Route Handlers (Server Layer)** | ✅ Selesai | `src/app/api/...` | Validasi Zod & Overpass API untuk faskes dinamis |
 | **Database TypeScript Types** | ✅ Selesai | `src/lib/supabase/database.types.ts` | Type safety Supabase diselaraskan tanpa tabel faskes |
 | **Supabase Client & Server** | ✅ Selesai | `src/lib/supabase/{client,server}.ts` | Terintegrasi SSR cookies dan admin client |
-| **Komponen Screening Mandiri** | ✅ Selesai | `src/features/screening/...` | Form interaktif gejala & tampilan hasil perkiraan risiko |
+| **Komponen Screening Mandiri** | ✅ Selesai | `src/features/screening/...` | Single top result, penjelasan etiologi/penyebab penyakit & tips pemulihan |
 | **Komponen Fasilitas Kesehatan** | ✅ Selesai (OSM Live) | `src/features/facilities/...` | Real-time OpenStreetMap Overpass API, radius kota, peta & rute Google Maps |
 | **Komponen Konsultasi Dokter** | 🔄 Siap Integrasi | `src/features/consultation/...` | Model domain & service sudah siap |
 | **UI Reusable & Layout** | ✅ Selesai | `src/components/{ui,layout}/...` | Button, Card, Badge, Navbar, Footer, CSS tokens |
@@ -29,11 +29,15 @@ Dokumen ini mencatat seluruh status perkembangan fitur, pemenuhan arsitektur, ca
    - Data faskes diambil secara dinamis & real-time via backend route handler (`/api/facilities/nearby`) yang mengontak OpenStreetMap (Overpass API).
    - Tabel `health_facilities` dan `facility_recommendations` dihapus karena tidak skalabel dan menimbulkan redundansi data.
    - Script SQL drop table telah disediakan di `supabase/migrations/20260905000001_drop_health_facilities.sql`.
-2. **Server-Side Firewall & Caching**:
+2. **Penyajian Hasil Skrining & Edukasi Penyebab Penyakit**:
+   - Hasil skrining hanya memprioritaskan 1 kondisi dengan kecocokan tertinggi (*primary assessment*).
+   - Menampilkan kartu edukasi interaktif: **"Mengapa Anda Mengalami Gejala Ini?"** yang menjelaskan mekanisme patogenesis, cara masuknya kuman (droplet/kontak), serta faktor kerentanan tubuh (imunitas turun, cuaca pancaroba, iritan polusi).
+   - Disertai tips pemulihan mandiri harian dan indikator tanda bahaya (*red flags*).
+3. **Server-Side Firewall & Caching**:
    - Route handler memvalidasi koordinat latitude, longitude, dan membatasi radius pencarian faskes agar tetap berada dalam cakupan kota pengguna (default radius 25 km).
-3. **Scoring Terisolasi**:
+4. **Scoring Terisolasi**:
    - Kalkulasi persentase kecocokan risiko dijalankan secara murni (pure function) di server.
-4. **Isolasi Service Role**:
+5. **Isolasi Service Role**:
    - Kunci `SUPABASE_SERVICE_ROLE_KEY` hanya dapat diakses oleh server dan tidak pernah terekspos ke browser.
 
 ---
@@ -46,4 +50,8 @@ Dokumen ini mencatat seluruh status perkembangan fitur, pemenuhan arsitektur, ca
    - Menghapus tabel lokal `health_facilities` & `facility_recommendations`.
    - Mengintegrasikan OpenStreetMap Overpass API server-side secara gratis tanpa API key.
    - Menampilkan kartu faskes dengan estimasi jarak, penunjuk arah Google Maps, dan peta visual.
-5. [ ] **Penyempurnaan Halaman Konsultasi Dokter**: Menampilkan kartu dokter online mitra dengan tombol langsung ke platform rujukan.
+5. [x] **Penyempurnaan Hasil Skrining Tunggal & Penjelasan Penyebab Penyakit**:
+   - Menampilkan 1 penyakit paling mendekati.
+   - Menambahkan penjelasan etiologi mengapa kuman masuk dan mengapa tubuh rentan.
+   - Menampilkan panduan perawatan mandiri dan tanda bahaya.
+6. [ ] **Penyempurnaan Halaman Konsultasi Dokter**: Menampilkan kartu dokter online mitra dengan tombol langsung ke platform rujukan.
