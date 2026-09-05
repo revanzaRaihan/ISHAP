@@ -67,6 +67,7 @@ export async function GET(
       session_id: r.session_id,
       disease_id: r.disease_id,
       disease_name: r.diseases?.name || "Kondisi Terkait ISPA",
+      disease_description: r.diseases?.description || null,
       severity_level: r.diseases?.severity_level || null,
       confidence_score: Number(r.confidence_score),
       reasoning: r.reasoning,

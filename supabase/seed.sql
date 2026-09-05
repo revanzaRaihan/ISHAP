@@ -65,16 +65,7 @@ insert into public.symptom_disease_map (symptom_id, disease_id, weight) values
   ('a1000001-0000-0000-0000-000000000001', 'b1000001-0000-0000-0000-000000000005', 1.5)  -- batuk kering
 on conflict (symptom_id, disease_id) do nothing;
 
--- 4. Insert Master Fasilitas Kesehatan (Sampel Wilayah Jabodetabek)
-insert into public.health_facilities (id, name, type, address, latitude, longitude) values
-  ('c1000001-0000-0000-0000-000000000001', 'Puskesmas Kecamatan Gambir', 'puskesmas', 'Jl. Tanah Abang II No.27, Petojo Selatan, Gambir, Jakarta Pusat', -6.17750, 106.81850),
-  ('c1000001-0000-0000-0000-000000000002', 'Puskesmas Tebet', 'puskesmas', 'Jl. Tebet Barat Dalam VI No.11, Tebet Barat, Jakarta Selatan', -6.23660, 106.84820),
-  ('c1000001-0000-0000-0000-000000000003', 'RSUD Tarakan Jakarta Pusat', 'rumah_sakit', 'Jl. Kyai Caringin No.7, Cideng, Gambir, Jakarta Pusat', -6.17060, 106.81070),
-  ('c1000001-0000-0000-0000-000000000004', 'RSUD Pasar Minggu', 'rumah_sakit', 'Jl. TB Simatupang No.1, Ragunan, Pasar Minggu, Jakarta Selatan', -6.29540, 106.82990),
-  ('c1000001-0000-0000-0000-000000000005', 'RSUP Persahabatan (Pusat Rujukan Paru Nasional)', 'rumah_sakit', 'Jl. Persahabatan Raya No.1, Rawamangun, Pulo Gadung, Jakarta Timur', -6.19630, 106.88370)
-on conflict (id) do nothing;
-
--- 5. Insert Profil Dokter Mitra Konsultasi Online
+-- 4. Insert Profil Dokter Mitra Konsultasi Online
 insert into public.online_doctor_profiles (id, name, platform, profile_url, specialty) values
   ('d1000001-0000-0000-0000-000000000001', 'dr. Sarah Nurbaiti, Sp.P', 'Halodoc', 'https://www.halodoc.com/tanya-dokter', 'Spesialis Paru & Pernapasan'),
   ('d1000001-0000-0000-0000-000000000002', 'dr. Budi Setiawan', 'Alodokter', 'https://www.alodokter.com/tanya-dokter', 'Dokter Umum - Skrining ISPA'),

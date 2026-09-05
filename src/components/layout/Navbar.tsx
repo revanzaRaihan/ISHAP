@@ -55,6 +55,16 @@ export const Navbar: React.FC = () => {
             Beranda & AQI
           </Link>
           <Link
+            href="/facilities"
+            style={{
+              fontSize: "0.95rem",
+              fontWeight: 600,
+              color: "var(--text-secondary)",
+            }}
+          >
+            Faskes Terdekat
+          </Link>
+          <Link
             href="/screening"
             className="btn btn-primary"
             style={{ padding: "8px 18px", fontSize: "0.9rem" }}
