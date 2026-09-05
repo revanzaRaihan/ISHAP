@@ -36,6 +36,24 @@ class ScreeningController extends Controller
     }
 
     /**
+     * Ekstraksi keluhan subjektif teks bebas ke daftar ID gejala menggunakan Gemini LLM.
+     */
+    public function extractSymptoms(Request $request, \App\Services\GeminiSymptomMapperService $gemini): \Illuminate\Http\JsonResponse
+    {
+        $validated = $request->validate([
+            'complaint' => 'required|string|min:4|max:500',
+        ], [
+            'complaint.required' => 'Silakan tuliskan keluhan yang Anda rasakan.',
+            'complaint.min' => 'Keluhan minimal 4 karakter.',
+            'complaint.max' => 'Keluhan maksimal 500 karakter.',
+        ]);
+
+        $result = $gemini->mapComplaintToSymptoms($validated['complaint']);
+
+        return response()->json($result);
+    }
+
+    /**
      * Proses submisi gejala dan kalkulasi skor risiko via pure function ScreeningEngine.
      */
     public function submit(Request $request, ScreeningEngine $engine, \App\Services\SupabaseService $supabase): RedirectResponse

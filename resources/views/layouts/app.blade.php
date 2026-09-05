@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'ISHAP — Skrining Mandiri ISPA & Kesehatan Pernapasan')</title>
     <meta name="description" content="@yield('meta_description', 'Aplikasi skrining mandiri risiko ISPA berbasis web modern dengan deteksi gejala, edukasi patogenesis, dan rekomendasi faskes terdekat.')">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

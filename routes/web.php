@@ -18,6 +18,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // 2. Alur Skrining Mandiri ISPA
 Route::get('/screening', [ScreeningController::class, 'index'])->name('screening.index');
 Route::post('/screening', [ScreeningController::class, 'submit'])->name('screening.submit');
+Route::post('/screening/extract-symptoms', [ScreeningController::class, 'extractSymptoms'])->middleware('throttle:15,1')->name('screening.extract-symptoms');
 Route::get('/screening/{sessionId}/result', [ScreeningController::class, 'result'])->name('screening.result');
 
 // 3. Pencarian Fasilitas Kesehatan Terdekat (OpenStreetMap Real-time)
