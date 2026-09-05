@@ -48,4 +48,10 @@ return [
         'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
     ],
 
+    'waqi' => [
+    'token' => env('WAQI_API_TOKEN'),
+],
+
+
+
 ];
