@@ -11,5 +11,6 @@ export interface HealthFacility {
 export interface NearbyFacilitiesResponse {
   latitude: number;
   longitude: number;
+  radius_km?: number;
   facilities: HealthFacility[];
 }

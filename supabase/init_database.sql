@@ -58,22 +58,6 @@ create table if not exists public.screening_results (
   created_at timestamptz default now()
 );
 
-create table if not exists public.health_facilities (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  type text,
-  address text,
-  latitude double precision,
-  longitude double precision
-);
-
-create table if not exists public.facility_recommendations (
-  id uuid primary key default gen_random_uuid(),
-  session_id uuid references public.screening_sessions(id) on delete cascade,
-  facility_id uuid references public.health_facilities(id) on delete cascade,
-  distance_km numeric
-);
-
 create table if not exists public.online_doctor_profiles (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -93,12 +77,10 @@ alter table public.profiles enable row level security;
 alter table public.screening_sessions enable row level security;
 alter table public.session_symptoms enable row level security;
 alter table public.screening_results enable row level security;
-alter table public.facility_recommendations enable row level security;
 alter table public.consultation_referrals enable row level security;
 alter table public.symptoms enable row level security;
 alter table public.diseases enable row level security;
 alter table public.symptom_disease_map enable row level security;
-alter table public.health_facilities enable row level security;
 alter table public.online_doctor_profiles enable row level security;
 
 -- Reference tables: Public Read
@@ -110,9 +92,6 @@ create policy "Public can read diseases" on public.diseases for select using (tr
 
 drop policy if exists "Public can read symptom_disease_map" on public.symptom_disease_map;
 create policy "Public can read symptom_disease_map" on public.symptom_disease_map for select using (true);
-
-drop policy if exists "Public can read health_facilities" on public.health_facilities;
-create policy "Public can read health_facilities" on public.health_facilities for select using (true);
 
 drop policy if exists "Public can read online_doctor_profiles" on public.online_doctor_profiles;
 create policy "Public can read online_doctor_profiles" on public.online_doctor_profiles for select using (true);
@@ -154,14 +133,6 @@ create policy "Users can view screening results" on public.screening_results for
 
 drop policy if exists "Users can insert screening results" on public.screening_results;
 create policy "Users can insert screening results" on public.screening_results for insert
-  with check (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
-
-drop policy if exists "Users can view facility recommendations" on public.facility_recommendations;
-create policy "Users can view facility recommendations" on public.facility_recommendations for select
-  using (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
-
-drop policy if exists "Users can insert facility recommendations" on public.facility_recommendations;
-create policy "Users can insert facility recommendations" on public.facility_recommendations for insert
   with check (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
 
 drop policy if exists "Users can view consultation referrals" on public.consultation_referrals;
@@ -217,14 +188,6 @@ insert into public.symptom_disease_map (symptom_id, disease_id, weight) values
   ('a1000001-0000-0000-0000-000000000007', 'b1000001-0000-0000-0000-000000000005', 3.5),
   ('a1000001-0000-0000-0000-000000000001', 'b1000001-0000-0000-0000-000000000005', 1.5)
 on conflict (symptom_id, disease_id) do nothing;
-
-insert into public.health_facilities (id, name, type, address, latitude, longitude) values
-  ('c1000001-0000-0000-0000-000000000001', 'Puskesmas Kecamatan Gambir', 'puskesmas', 'Jl. Tanah Abang II No.27, Petojo Selatan, Gambir, Jakarta Pusat', -6.17750, 106.81850),
-  ('c1000001-0000-0000-0000-000000000002', 'Puskesmas Tebet', 'puskesmas', 'Jl. Tebet Barat Dalam VI No.11, Tebet Barat, Jakarta Selatan', -6.23660, 106.84820),
-  ('c1000001-0000-0000-0000-000000000003', 'RSUD Tarakan Jakarta Pusat', 'rumah_sakit', 'Jl. Kyai Caringin No.7, Cideng, Gambir, Jakarta Pusat', -6.17060, 106.81070),
-  ('c1000001-0000-0000-0000-000000000004', 'RSUD Pasar Minggu', 'rumah_sakit', 'Jl. TB Simatupang No.1, Ragunan, Pasar Minggu, Jakarta Selatan', -6.29540, 106.82990),
-  ('c1000001-0000-0000-0000-000000000005', 'RSUP Persahabatan (Pusat Rujukan Paru Nasional)', 'rumah_sakit', 'Jl. Persahabatan Raya No.1, Rawamangun, Pulo Gadung, Jakarta Timur', -6.19630, 106.88370)
-on conflict (id) do nothing;
 
 insert into public.online_doctor_profiles (id, name, platform, profile_url, specialty) values
   ('d1000001-0000-0000-0000-000000000001', 'dr. Sarah Nurbaiti, Sp.P', 'Halodoc', 'https://www.halodoc.com/tanya-dokter', 'Spesialis Paru & Pernapasan'),

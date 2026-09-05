@@ -61,25 +61,7 @@ create table if not exists public.screening_results (
   created_at timestamptz default now()
 );
 
--- 8. Master Fasilitas Kesehatan
-create table if not exists public.health_facilities (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  type text,                              -- 'puskesmas' | 'rumah_sakit'
-  address text,
-  latitude double precision,
-  longitude double precision
-);
-
--- 9. Rekomendasi Faskes per Sesi Skrining
-create table if not exists public.facility_recommendations (
-  id uuid primary key default gen_random_uuid(),
-  session_id uuid references public.screening_sessions(id) on delete cascade,
-  facility_id uuid references public.health_facilities(id) on delete cascade,
-  distance_km numeric
-);
-
--- 10. Profil Dokter Konsultasi Online
+-- 8. Profil Dokter Konsultasi Online
 create table if not exists public.online_doctor_profiles (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -88,7 +70,7 @@ create table if not exists public.online_doctor_profiles (
   specialty text
 );
 
--- 11. Rujukan Konsultasi per Sesi Skrining
+-- 9. Rujukan Konsultasi per Sesi Skrining
 create table if not exists public.consultation_referrals (
   id uuid primary key default gen_random_uuid(),
   session_id uuid references public.screening_sessions(id) on delete cascade,
@@ -104,19 +86,16 @@ alter table public.profiles enable row level security;
 alter table public.screening_sessions enable row level security;
 alter table public.session_symptoms enable row level security;
 alter table public.screening_results enable row level security;
-alter table public.facility_recommendations enable row level security;
 alter table public.consultation_referrals enable row level security;
 alter table public.symptoms enable row level security;
 alter table public.diseases enable row level security;
 alter table public.symptom_disease_map enable row level security;
-alter table public.health_facilities enable row level security;
 alter table public.online_doctor_profiles enable row level security;
 
 -- 1. Reference tables: Public SELECT, modify restricted to service role
 create policy "Public can read symptoms" on public.symptoms for select using (true);
 create policy "Public can read diseases" on public.diseases for select using (true);
 create policy "Public can read symptom_disease_map" on public.symptom_disease_map for select using (true);
-create policy "Public can read health_facilities" on public.health_facilities for select using (true);
 create policy "Public can read online_doctor_profiles" on public.online_doctor_profiles for select using (true);
 
 -- 2. Profiles: User can manage their own profile
@@ -147,13 +126,6 @@ create policy "Users can view screening results" on public.screening_results for
   using (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
 
 create policy "Users can insert screening results" on public.screening_results for insert
-  with check (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
-
--- Facility Recommendations
-create policy "Users can view facility recommendations" on public.facility_recommendations for select
-  using (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
-
-create policy "Users can insert facility recommendations" on public.facility_recommendations for insert
   with check (exists (select 1 from public.screening_sessions s where s.id = session_id and (s.user_id = auth.uid() or s.user_id is null)));
 
 -- Consultation Referrals
