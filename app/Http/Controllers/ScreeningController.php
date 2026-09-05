@@ -10,6 +10,7 @@ use App\Models\SessionSymptom;
 use App\Models\Symptom;
 use App\Models\SymptomDiseaseMap;
 use App\Services\ScreeningEngine;
+use App\Services\AIService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -38,55 +39,53 @@ class ScreeningController extends Controller
     /**
      * Proses submisi gejala dan kalkulasi skor risiko via pure function ScreeningEngine.
      */
-    public function submit(Request $request, ScreeningEngine $engine, \App\Services\SupabaseService $supabase): RedirectResponse
+    public function submit(Request $request, ScreeningEngine $engine, AIService $aiService)
     {
         $validated = $request->validate([
             'symptom_ids' => 'required|array|min:1',
-            'symptom_ids.*' => 'required|string|exists:symptoms,id',
-        ], [
-            'symptom_ids.required' => 'Pilih minimal satu gejala yang Anda rasakan untuk memulai skrining.',
-            'symptom_ids.min' => 'Pilih minimal satu gejala yang Anda rasakan.',
         ]);
 
-        $selectedSymptomIds = $validated['symptom_ids'];
+        $selectedSymptomIds = $request->symptom_ids;
+        $symptomNames = Symptom::whereIn('id', $selectedSymptomIds)->pluck('name')->toArray();
 
-        // 1. Buat sesi skrining baru
+        // 1. Hitung skor awal secara matematis (Ambil 3 besar sebagai kandidat)
+        $weights = SymptomDiseaseMap::all()->toArray();
+        $diseases = Disease::all()->toArray();
+        $initialResults = $engine->calculateScreeningRisk($selectedSymptomIds, $weights, $diseases);
+
+        // Ambil detail kandidat (ID dan Nama) untuk dikirim ke AI
+        $topCandidates = [];
+        foreach (array_slice($initialResults, 0, 3) as $res) {
+            $diseaseInfo = Disease::find($res['disease_id']);
+            $topCandidates[] = [
+                'id' => $res['disease_id'],
+                'name' => $diseaseInfo->name,
+                'math_score' => $res['confidence_score']
+            ];
+        }
+
+        // 2. Panggil AI untuk menentukan diagnosa akhir & insight mendalam
+        // Kita buat satu fungsi di AIService yang menangani semuanya sekaligus
+        $aiAssessment = $aiService->getFinalAssessment($symptomNames, $topCandidates);
+
+        // 3. Simpan Sesi Skrining
         $session = ScreeningSession::create([
-            'id' => (string) Str::uuid(),
+            'id' => (string) \Str::uuid(),
             'status' => 'completed',
+            'ai_insight' => json_encode($aiAssessment) // Simpan semua insight AI di sini
         ]);
 
-        // 2. Catat gejala yang dipilih
-        foreach ($selectedSymptomIds as $symptomId) {
-            SessionSymptom::create([
-                'session_id' => $session->id,
-                'symptom_id' => $symptomId,
-            ]);
-        }
+        // 4. Simpan hasil pilihan AI ke tabel ScreeningResults (sebagai hasil utama)
+        ScreeningResult::create([
+            'session_id' => $session->id,
+            'disease_id' => $aiAssessment['selected_disease_id'] ?? $topCandidates[0]['id'],
+            'confidence_score' => $aiAssessment['confidence'] ?? $topCandidates[0]['math_score'],
+            'reasoning' => $aiAssessment['analisis_mendalam'] ?? 'Berdasarkan kecocokan gejala klinis.',
+            'matched_symptoms_count' => count($selectedSymptomIds),
+            'total_symptoms_for_disease' => 0 // Opsional
+        ]);
 
-        // 3. Ambil data master bobot dan penyakit untuk kalkulasi
-        $weights = SymptomDiseaseMap::all(['symptom_id', 'disease_id', 'weight'])->toArray();
-        $diseases = Disease::all(['id', 'name', 'severity_level', 'description'])->toArray();
-
-        // 4. Hitung perkiraan risiko menggunakan pure function engine
-        $riskAssessments = $engine->calculateScreeningRisk($selectedSymptomIds, $weights, $diseases);
-
-        // 5. Simpan hasil penilaian risiko
-        foreach ($riskAssessments as $assessment) {
-            ScreeningResult::create([
-                'session_id' => $session->id,
-                'disease_id' => $assessment['disease_id'],
-                'confidence_score' => $assessment['confidence_score'],
-                'matched_symptoms_count' => $assessment['matched_symptoms_count'],
-                'total_symptoms_for_disease' => $assessment['total_symptoms_for_disease'],
-                'reasoning' => $assessment['reasoning'],
-            ]);
-        }
-
-        // 6. Sinkronisasi sesi skrining ke Supabase (Database cloud)
-        $supabase->saveScreeningSession($session->id, $selectedSymptomIds, $riskAssessments);
-
-        return redirect()->route('screening.result', ['sessionId' => $session->id]);
+        return redirect()->route('screening.result', $session->id);
     }
 
     /**

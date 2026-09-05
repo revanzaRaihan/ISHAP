@@ -41,4 +41,10 @@ return [
         'service_role_key' => env('SUPABASE_SERVICE_ROLE_KEY'),
     ],
 
+    'anything_llm' => [
+        'url' => env('ANYTHING_LLM_URL'),
+        'key' => env('ANYTHING_LLM_API_KEY'),
+        'workspace' => env('ANYTHING_LLM_WORKSPACE'),
+    ],
+
 ];
