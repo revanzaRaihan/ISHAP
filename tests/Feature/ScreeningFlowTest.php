@@ -16,6 +16,18 @@ class ScreeningFlowTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        \Illuminate\Support\Facades\Http::fake([
+            'http://ip-api.com/*' => \Illuminate\Support\Facades\Http::response([
+                'status' => 'success',
+                'lat' => -6.1754,
+                'lon' => 106.8272,
+                'city' => 'Jakarta Pusat',
+            ], 200),
+            'https://overpass-api.de/*' => \Illuminate\Support\Facades\Http::response([
+                'elements' => [],
+            ], 200),
+        ]);
     }
 
     public function test_home_page_is_accessible(): void
@@ -23,7 +35,7 @@ class ScreeningFlowTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('ISHAP');
-        $response->assertSee('Live Kualitas Udara');
+        $response->assertSee('Pemantauan Kualitas');
     }
 
     public function test_screening_page_displays_symptoms(): void
@@ -52,8 +64,8 @@ class ScreeningFlowTest extends TestCase
         // Verify result page renders properly
         $resultResponse = $this->get("/screening/{$session->id}/result");
         $resultResponse->assertStatus(200);
-        $resultResponse->assertSee('Hasil Skrining Mandiri');
-        $resultResponse->assertSee('Mengapa Anda Mengalami Gejala Ini?');
+        $resultResponse->assertSee('Health Report Card');
+        $resultResponse->assertSee('Kecocokan Gejala');
     }
 
     public function test_facilities_page_is_accessible(): void

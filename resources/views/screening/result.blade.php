@@ -1,30 +1,48 @@
 @extends('layouts.app')
 
-@section('title', 'Hasil Skrining Mandiri ISPA — ISHAP')
+@section('title', 'Health Report Card — ISHAP')
 
 @section('content')
-<div class="py-10 bg-slate-50 min-h-screen">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-10 bg-gradient-to-b from-slate-50 via-emerald-50/20 to-white min-h-screen relative overflow-hidden">
+    
+    <!-- Subtle Background Organic Wave Accent -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-100/40 blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 -left-32 w-80 h-80 rounded-full bg-teal-100/30 blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 relative">
         
-        <!-- Navigation Back -->
+        <!-- Top Action Bar -->
         <div class="mb-6 flex items-center justify-between">
-            <a href="{{ route('screening.index') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-emerald-600 transition">
-                &larr; Skrining Ulang
+            <a href="{{ route('screening.index') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#0F5144] transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Skrining Ulang</span>
             </a>
-            <span class="text-xs text-slate-400 font-mono">ID Sesi: {{ substr($session->id, 0, 8) }}</span>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-slate-200 bg-white/90 backdrop-blur-sm text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    <span>Cetak Resume</span>
+                </button>
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100/80 text-[#0F5144] border border-emerald-200 font-mono">
+                    #{{ substr($session->id, 0, 8) }}
+                </span>
+            </div>
         </div>
 
         @if (!$topResult)
-            <div class="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-sm">
-                <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+            <div class="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-sm max-w-lg mx-auto">
+                <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
                     !
                 </div>
-                <h2 class="text-xl font-bold text-slate-900 mb-2">Tidak Ditemukan Indikator Spesifik</h2>
-                <p class="text-sm text-slate-600 max-w-md mx-auto mb-6">
-                    Gejala yang Anda pilih tidak cukup kuat mencocokkan pola klinis ISPA dalam sistem kami.
+                <h2 class="text-xl font-bold text-slate-900 mb-2">Tidak Ditemukan Pola Spesifik</h2>
+                <p class="text-xs text-slate-500 mb-6">
+                    Gejala yang Anda laporkan belum mencukupi kriteria klinis ISPA dalam sistem skrining kami.
                 </p>
-                <a href="{{ route('screening.index') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700">
-                    Coba Pilih Gejala Lain
+                <a href="{{ route('screening.index') }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0F5144] text-white text-xs font-bold hover:bg-[#0B3C32] transition">
+                    Pilih Gejala Lain
                 </a>
             </div>
         @else
@@ -34,428 +52,306 @@
                 $isSevere = $severity === 'berat';
                 $isModerate = $severity === 'sedang';
 
-                $badgeClass = match($severity) {
-                    'berat' => 'bg-rose-100 text-rose-800 border-rose-200',
-                    'sedang' => 'bg-amber-100 text-amber-800 border-amber-200',
-                    default => 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                // Hitung skor titik indikator (skala 1-5 dots seperti di gambar referensi)
+                $scoreDots = min(5, max(1, (int) round(($topResult->confidence_score / 100) * 5)));
+                $severityDots = match($severity) {
+                    'berat' => 5,
+                    'sedang' => 3,
+                    default => 1,
                 };
-            @endphp
 
-            <!-- Hero Assessment Banner -->
-            <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-md border border-slate-200/90 mb-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-emerald-100/40 to-transparent rounded-bl-full pointer-events-none"></div>
-
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-100 relative">
-                    <div>
-                        <div class="flex items-center gap-2.5 mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Hasil Skrining Mandiri</span>
-                            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border {{ $badgeClass }}">
-                                Risiko {{ ucfirst($severity) }}
-                            </span>
-                        </div>
-                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                            {{ $disease->name }}
-                        </h1>
-                        <p class="text-sm text-slate-600 mt-2 max-w-2xl leading-relaxed">
-                            {{ $disease->description }}
-                        </p>
-                    </div>
-
-                    <!-- Confidence Score Meter -->
-                    <div class="flex items-center gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 shrink-0">
-                        <div class="text-center">
-                            <div class="text-3xl sm:text-4xl font-black text-emerald-600">
-                                {{ $topResult->confidence_score }}%
-                            </div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Estimasi Kecocokan</div>
-                        </div>
-                        <div class="h-10 w-px bg-slate-200"></div>
-                        <div class="text-xs text-slate-500 max-w-[130px] leading-tight">
-                            Berdasarkan <strong>{{ $topResult->matched_symptoms_count }}</strong> indikator dari gejala yang Anda rasakan.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gejala Terpilih oleh Pengguna -->
-                <div class="pt-6">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">Gejala yang Anda Laporkan:</span>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach ($session->symptoms as $sym)
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                {{ $sym->name }}
-                            </span>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-
-            <!-- PETA ANATOMI INTERAKTIF: Titik Fokus Infeksi & Peradangan -->
-            @php
                 $diseaseNameLower = strtolower($disease->name ?? '');
-                // Tentukan fokus organ primer berdasarkan jenis penyakit
                 $primaryTarget = 'lungs';
+                $primaryTargetName = 'Paru-Paru (Pulmo)';
                 if (str_contains($diseaseNameLower, 'cold') || str_contains($diseaseNameLower, 'pilek') || str_contains($diseaseNameLower, 'rhinitis')) {
                     $primaryTarget = 'nasal';
+                    $primaryTargetName = 'Rongga Hidung & Sinus';
                 } elseif (str_contains($diseaseNameLower, 'faringitis') || str_contains($diseaseNameLower, 'tenggorokan')) {
                     $primaryTarget = 'pharynx';
+                    $primaryTargetName = 'Faring & Amandel';
                 } elseif (str_contains($diseaseNameLower, 'bronkitis')) {
                     $primaryTarget = 'bronchi';
+                    $primaryTargetName = 'Percabangan Bronkus';
                 } elseif (str_contains($diseaseNameLower, 'pneumonia')) {
                     $primaryTarget = 'alveoli';
+                    $primaryTargetName = 'Kantung Udara Alveolus';
                 } elseif (str_contains($diseaseNameLower, 'asma')) {
                     $primaryTarget = 'bronchi';
+                    $primaryTargetName = 'Bronkus & Saluran Napas';
                 }
             @endphp
 
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 mb-8 overflow-hidden">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold shadow-sm shadow-emerald-500/20">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                Peta Anatomi Titik Infeksi & Peradangan
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200">
-                                    Interactive 2.5D Body Map
-                                </span>
-                            </h2>
-                            <p class="text-xs text-slate-500">Visualisasi letak jaringan saluran pernapasan yang terdampak oleh kondisi klinis Anda</p>
-                        </div>
-                    </div>
-                    <div class="inline-flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 self-start sm:self-auto">
-                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-                        <span>Klik organ untuk melihat anatomi</span>
-                    </div>
-                </div>
-
+            <!-- Hero Section: Headline & Body Silhouette Banner -->
+            <div class="mb-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <!-- Kolom Kiri: Diagram Vektor Anatomi SVG Interaktif -->
-                    <div class="lg:col-span-6 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 rounded-3xl border border-slate-800 relative shadow-inner">
-                        <!-- Legend & Mode Switcher -->
-                        <div class="w-full flex items-center justify-between text-[11px] text-slate-400 mb-2 px-2">
-                            <span class="flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500"></span>
-                                Titik Inflamasi Utama
-                            </span>
-                            <span class="text-slate-500">Siluet Transparan 2.5D</span>
+                    
+                    <!-- Kolom Teks Utama -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#0F5144] text-[11px] font-extrabold uppercase tracking-wider">
+                            <span>Laporan Skrining Mandiri</span>
+                            <span>&bull;</span>
+                            <span>ISHAP Clinical Report</span>
                         </div>
 
-                        <!-- SVG Anatomi Saluran Pernapasan -->
-                        <svg viewBox="0 0 360 460" class="w-full max-w-[320px] h-auto select-none" id="anatomicalSvg">
-                            <defs>
-                                <!-- Filter Glow Inflamasi -->
-                                <filter id="glow-severe" x="-40%" y="-40%" width="180%" height="180%">
-                                    <feGaussianBlur stdDeviation="6" result="blur" />
-                                    <feMerge>
-                                        <feMergeNode in="blur" />
-                                        <feMergeNode in="SourceGraphic" />
-                                    </feMerge>
-                                </filter>
-                                <filter id="glow-moderate" x="-30%" y="-30%" width="160%" height="160%">
-                                    <feGaussianBlur stdDeviation="4" result="blur" />
-                                    <feMerge>
-                                        <feMergeNode in="blur" />
-                                        <feMergeNode in="SourceGraphic" />
-                                    </feMerge>
-                                </filter>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                            Hasil Evaluasi Kondisi <br>
+                            <span class="text-[#0F5144] underline decoration-emerald-300 underline-offset-4">{{ $disease->name }}</span>
+                        </h1>
 
-                                <!-- Gradien Paru-paru & Saluran -->
-                                <linearGradient id="grad-body" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stop-color="#334155" stop-opacity="0.25" />
-                                    <stop offset="100%" stop-color="#1e293b" stop-opacity="0.15" />
-                                </linearGradient>
-                                <linearGradient id="grad-lung-normal" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3" />
-                                    <stop offset="100%" stop-color="#0284c7" stop-opacity="0.5" />
-                                </linearGradient>
-                                <linearGradient id="grad-lung-inflamed" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#fb7185" stop-opacity="0.85" />
-                                    <stop offset="100%" stop-color="#e11d48" stop-opacity="0.95" />
-                                </linearGradient>
-                                <linearGradient id="grad-bronchi" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stop-color="#38bdf8" />
-                                    <stop offset="100%" stop-color="#0284c7" />
-                                </linearGradient>
-                            </defs>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-lg">
+                            {{ $disease->description }}
+                        </p>
 
-                            <!-- 1. Siluet Luar Tubuh Manusia (Transparan Glass) -->
-                            <path d="M 180,25 C 150,25 140,55 140,85 C 140,115 155,135 160,145 C 130,150 90,165 70,210 C 50,255 45,340 45,430 L 315,430 C 315,340 310,255 290,210 C 270,165 230,150 200,145 C 205,135 220,115 220,85 C 220,55 210,25 180,25 Z" 
-                                  fill="url(#grad-body)" stroke="#475569" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
-
-                            <!-- Garis Tulang Rusuk Skematis (Background depth) -->
-                            <g stroke="#334155" stroke-width="1" opacity="0.4" fill="none">
-                                <path d="M 140,230 Q 180,240 220,230" />
-                                <path d="M 130,260 Q 180,275 230,260" />
-                                <path d="M 125,290 Q 180,310 235,290" />
-                                <path d="M 125,320 Q 180,345 235,320" />
-                            </g>
-
-                            <!-- 2. Rongga Hidung & Sinus (Upper Tract) -->
-                            <g id="svg_part_nasal" class="organ-node cursor-pointer transition-all duration-300" onclick="selectOrgan('nasal')">
-                                <path d="M 175,55 Q 180,50 185,55 L 188,72 Q 180,78 172,72 Z" 
-                                      id="shape_nasal" fill="#0284c7" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                                <circle cx="180" cy="65" r="14" fill="#38bdf8" fill-opacity="0.1" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2 2" />
-                            </g>
-
-                            <!-- 3. Faring & Pangkal Tenggorokan -->
-                            <g id="svg_part_pharynx" class="organ-node cursor-pointer transition-all duration-300" onclick="selectOrgan('pharynx')">
-                                <path d="M 172,88 L 188,88 L 186,115 L 174,115 Z" 
-                                      id="shape_pharynx" fill="#0284c7" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                            </g>
-
-                            <!-- 4. Laring & Trakea (Batang Tenggorokan) -->
-                            <g id="svg_part_trachea" class="organ-node cursor-pointer transition-all duration-300" onclick="selectOrgan('trachea')">
-                                <rect x="174" y="118" width="12" height="42" rx="3" 
-                                      id="shape_trachea" fill="#0284c7" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                                <!-- Cincin Tulang Rawan Trakea -->
-                                <line x1="174" y1="126" x2="186" y2="126" stroke="#bae6fd" stroke-width="1.5" />
-                                <line x1="174" y1="134" x2="186" y2="134" stroke="#bae6fd" stroke-width="1.5" />
-                                <line x1="174" y1="142" x2="186" y2="142" stroke="#bae6fd" stroke-width="1.5" />
-                                <line x1="174" y1="150" x2="186" y2="150" stroke="#bae6fd" stroke-width="1.5" />
-                            </g>
-
-                            <!-- 5. Paru-paru Kiri & Kanan (Lungs Parenchyma) -->
-                            <g id="svg_part_lungs" class="organ-node cursor-pointer transition-all duration-300" onclick="selectOrgan('lungs')">
-                                <!-- Paru Kanan (Sisi Kiri di pandangan depan) -->
-                                <path d="M 165,185 C 145,180 100,195 90,240 C 80,285 85,340 105,370 C 120,385 155,375 165,340 C 170,300 170,220 165,185 Z" 
-                                      id="shape_lung_right" fill="url(#grad-lung-normal)" stroke="#38bdf8" stroke-width="2"/>
-                                
-                                <!-- Paru Kiri (Dengan Cardiac Notch untuk Jantung) -->
-                                <path d="M 195,185 C 215,180 260,195 270,240 C 280,285 275,340 255,370 C 240,385 210,375 200,345 C 190,315 190,220 195,185 Z" 
-                                      id="shape_lung_left" fill="url(#grad-lung-normal)" stroke="#38bdf8" stroke-width="2"/>
-                            </g>
-
-                            <!-- 6. Percabangan Bronkus (Bronchial Tree) -->
-                            <g id="svg_part_bronchi" class="organ-node cursor-pointer transition-all duration-300" onclick="selectOrgan('bronchi')">
-                                <!-- Cabang Utama Kanan -->
-                                <path d="M 180,160 Q 165,175 145,190 Q 130,205 115,225" fill="none" id="shape_bronchi_1" stroke="#38bdf8" stroke-width="4.5" stroke-linecap="round"/>
-                                <path d="M 145,190 Q 140,215 135,245" fill="none" id="shape_bronchi_2" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                                <path d="M 130,205 Q 115,215 105,235" fill="none" id="shape_bronchi_3" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-
-                                <!-- Cabang Utama Kiri -->
-                                <path d="M 180,160 Q 195,175 215,190 Q 230,205 245,225" fill="none" id="shape_bronchi_4" stroke="#38bdf8" stroke-width="4.5" stroke-linecap="round"/>
-                                <path d="M 215,190 Q 220,215 225,245" fill="none" id="shape_bronchi_5" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                                <path d="M 230,205 Q 245,215 255,235" fill="none" id="shape_bronchi_6" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                            </g>
-
-                            <!-- 7. Kantung Alveolus (Microscopic Node Hotspots) -->
-                            <g id="svg_part_alveoli" class="organ-node cursor-pointer transition-all duration-300" onclick="selectOrgan('alveoli')">
-                                <circle cx="115" cy="300" r="10" id="shape_alveoli_1" fill="#38bdf8" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                                <circle cx="140" cy="325" r="9" id="shape_alveoli_2" fill="#38bdf8" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                                <circle cx="245" cy="300" r="10" id="shape_alveoli_3" fill="#38bdf8" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                                <circle cx="220" cy="325" r="9" id="shape_alveoli_4" fill="#38bdf8" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2"/>
-                            </g>
-
-                            <!-- Label Penunjuk Interaktif Dinamis -->
-                            <g id="activePointer" class="transition-all duration-500">
-                                <circle id="pointerTarget" cx="180" cy="90" r="8" fill="#e11d48" stroke="#fff" stroke-width="2" class="animate-ping" opacity="0.8"/>
-                                <circle id="pointerCore" cx="180" cy="90" r="5" fill="#e11d48" stroke="#fff" stroke-width="1.5" />
-                            </g>
-                        </svg>
-
-                        <!-- Pijakan visual / glow lantai -->
-                        <div class="w-48 h-3 bg-teal-500/20 rounded-full blur-md mt-2"></div>
-                    </div>
-
-                    <!-- Kolom Kanan: Detail Organ & Hubungan Klinis -->
-                    <div class="lg:col-span-6 space-y-5">
-                        <!-- Tab Navigasi Cepat Organ -->
-                        <div class="flex flex-wrap gap-1.5 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
-                            <button type="button" onclick="selectOrgan('nasal')" id="tab_nasal" class="organ-tab px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
-                                Rongga Hidung
-                            </button>
-                            <button type="button" onclick="selectOrgan('pharynx')" id="tab_pharynx" class="organ-tab px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
-                                Faring / Tenggorokan
-                            </button>
-                            <button type="button" onclick="selectOrgan('trachea')" id="tab_trachea" class="organ-tab px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
-                                Trakea
-                            </button>
-                            <button type="button" onclick="selectOrgan('bronchi')" id="tab_bronchi" class="organ-tab px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
-                                Bronkus
-                            </button>
-                            <button type="button" onclick="selectOrgan('lungs')" id="tab_lungs" class="organ-tab px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
-                                Paru-Paru
-                            </button>
-                            <button type="button" onclick="selectOrgan('alveoli')" id="tab_alveoli" class="organ-tab px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
-                                Alveolus
-                            </button>
-                        </div>
-
-                        <!-- Panel Informasi Organ Aktif -->
-                        <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 shadow-xs relative overflow-hidden transition-all duration-300" id="organDetailCard">
-                            <div class="flex items-center justify-between gap-3 mb-3">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400" id="organCategoryBadge">Saluran Napas Atas</span>
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold" id="organStatusBadge">
-                                    Fokus Inflamasi
+                        <!-- Reported Symptom Chips -->
+                        <div class="pt-2 flex flex-wrap items-center gap-1.5">
+                            <span class="text-[11px] font-bold text-slate-400 mr-1">Gejala Terdeteksi:</span>
+                            @foreach ($session->symptoms as $sym)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    {{ $sym->name }}
                                 </span>
-                            </div>
+                            @endforeach
+                        </div>
+                    </div>
 
-                            <h3 class="text-xl font-extrabold text-slate-900 tracking-tight mb-2" id="organTitle">
-                                Rongga Hidung & Sinus
-                            </h3>
-
-                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4" id="organDescription">
-                                Bagian pertama saluran napas yang berfungsi menyaring, menghangatkan, dan melembapkan udara yang masuk.
-                            </p>
-
-                            <div class="pt-4 border-t border-slate-200/80 space-y-2.5">
-                                <div class="flex items-start gap-2 text-xs text-slate-700">
-                                    <span class="font-bold text-slate-900 shrink-0">Gejala Umum:</span>
-                                    <span id="organSymptoms">Hidung tersumbat, bersin, sekret hidung encer/kental.</span>
-                                </div>
-                                <div class="flex items-start gap-2 text-xs text-slate-700">
-                                    <span class="font-bold text-slate-900 shrink-0">Dampak Patologis:</span>
-                                    <span id="organPathology">Peradangan mukosa epitel silia memicu hipersekresi lendir (pilek).</span>
-                                </div>
-                            </div>
+                    <!-- Kolom Visual: Silhouette Manusia Bersih & Concentric Rings (Sesuai Referensi Gambar) -->
+                    <div class="lg:col-span-5 flex justify-center relative">
+                        <!-- Concentric Ripples -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="w-64 h-64 rounded-full border border-emerald-200/60 animate-pulse"></div>
+                            <div class="w-48 h-48 rounded-full border border-emerald-200/80 absolute"></div>
+                            <div class="w-32 h-32 rounded-full border border-emerald-300/80 absolute"></div>
                         </div>
 
-                        <!-- Hubungan dengan Penyakit Anda -->
-                        <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 flex items-center gap-3.5">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 font-black text-xs">
-                                ISPA
-                            </div>
-                            <div class="text-xs text-slate-700 leading-relaxed">
-                                Berdasarkan kondisi <strong>{{ $disease->name }}</strong>, titik inflamasi klinis utama Anda terfokus pada <span class="font-bold text-emerald-800 underline decoration-emerald-400" id="organFocusMention">{{ $primaryTarget }}</span>.
+                        <!-- Clean Lime/Emerald Silhouette with Vital Organ Heartbeat -->
+                        <div class="relative z-10 w-full max-w-[280px] flex flex-col items-center">
+                            <svg viewBox="0 0 360 440" class="w-full h-auto select-none" id="cleanAnatomicalSvg">
+                                <!-- Silhouette Tubuh Manusia Bersih (Light Lime/Emerald Aesthetic) -->
+                                <path d="M 180,30 C 158,30 148,50 148,76 C 148,102 160,118 165,126 C 138,132 105,148 88,185 C 70,225 65,300 65,420 L 295,420 C 295,300 290,225 272,185 C 255,148 222,132 195,126 C 200,118 212,102 212,76 C 212,50 202,30 180,30 Z" 
+                                      fill="#dcfce7" stroke="#86efac" stroke-width="2.5" />
+
+                                <!-- Jantung / Titik Vital Berpendar di Tengah Tubuh (Sesuai Gambar) -->
+                                <circle cx="180" cy="195" r="32" fill="#bbf7d0" fill-opacity="0.6" stroke="#4ade80" stroke-width="1.5" />
+                                
+                                <!-- Saluran Napas Vektor Transparan di Dalam Siluet -->
+                                <g stroke="#15803d" stroke-width="2" fill="none" opacity="0.6">
+                                    <!-- Hidung ke Faring -->
+                                    <path d="M 180,70 L 180,135" />
+                                    <!-- Percabangan Bronkus -->
+                                    <path d="M 180,135 Q 165,150 145,170" stroke-width="3" />
+                                    <path d="M 180,135 Q 195,150 215,170" stroke-width="3" />
+                                    <!-- Paru Kanan & Kiri -->
+                                    <path d="M 140,165 C 120,160 95,180 90,220 C 85,260 95,300 120,320 C 135,330 155,310 155,270 Z" fill="#bbf7d0" fill-opacity="0.4" stroke="#22c55e" stroke-width="1.5" />
+                                    <path d="M 220,165 C 240,160 265,180 270,220 C 275,260 265,300 240,320 C 225,330 205,310 205,270 Z" fill="#bbf7d0" fill-opacity="0.4" stroke="#22c55e" stroke-width="1.5" />
+                                </g>
+
+                                <!-- Organ Inflamasi Aktif (Pulsing Pin Target Sesuai Penyakit) -->
+                                <g id="activeVitalTarget" class="transition-all duration-300">
+                                    <circle id="cleanPointerTarget" cx="180" cy="130" r="16" fill="#f43f5e" fill-opacity="0.25" stroke="#f43f5e" stroke-width="2" class="animate-ping" />
+                                    <circle id="cleanPointerCore" cx="180" cy="130" r="8" fill="#e11d48" stroke="#ffffff" stroke-width="2" />
+                                    <!-- Icon Pulse ECG di titik vital -->
+                                    <path d="M 175,130 L 178,130 L 180,126 L 182,134 L 184,130 L 186,130" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                            </svg>
+
+                            <!-- Organ Selector Pills (Minimalis) -->
+                            <div class="flex flex-wrap justify-center gap-1 mt-2 bg-white/80 backdrop-blur-sm p-1.5 rounded-full border border-emerald-200/80 shadow-xs">
+                                <button type="button" onclick="selectCleanOrgan('nasal')" id="btn_nasal" class="clean-tab px-2.5 py-0.5 rounded-full text-[10px] font-bold text-slate-500 hover:text-slate-900 transition">
+                                    Hidung
+                                </button>
+                                <button type="button" onclick="selectCleanOrgan('pharynx')" id="btn_pharynx" class="clean-tab px-2.5 py-0.5 rounded-full text-[10px] font-bold text-slate-500 hover:text-slate-900 transition">
+                                    Faring
+                                </button>
+                                <button type="button" onclick="selectCleanOrgan('bronchi')" id="btn_bronchi" class="clean-tab px-2.5 py-0.5 rounded-full text-[10px] font-bold text-slate-500 hover:text-slate-900 transition">
+                                    Bronkus
+                                </button>
+                                <button type="button" onclick="selectCleanOrgan('lungs')" id="btn_lungs" class="clean-tab px-2.5 py-0.5 rounded-full text-[10px] font-bold text-slate-500 hover:text-slate-900 transition">
+                                    Paru-Paru
+                                </button>
+                                <button type="button" onclick="selectCleanOrgan('alveoli')" id="btn_alveoli" class="clean-tab px-2.5 py-0.5 rounded-full text-[10px] font-bold text-slate-500 hover:text-slate-900 transition">
+                                    Alveolus
+                                </button>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
-            <!-- Kartu Edukasi: Etiologi & Patogenesis (Mengapa Kuman Masuk?) -->
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 mb-8">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-                    <div class="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            <!-- THE HEALTH REPORT CARD (Dengan Spacing-Y Antar Teks yang Nyaman & Lega) -->
+            <div class="bg-white rounded-3xl p-6 sm:p-9 border border-slate-200/80 shadow-xl shadow-emerald-950/5 mb-8 relative">
+                
+                <!-- Card Header (Clipboard Icon + Title + Subtitle dengan Spacing-Y Lega) -->
+                <div class="flex items-center gap-4 pb-6 mb-2 border-b border-slate-100">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#0F5144] flex items-center justify-center shrink-0 shadow-2xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                         </svg>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900">Mengapa Anda Mengalami Gejala Ini? (Etiologi & Patogenesis)</h2>
-                        <p class="text-xs text-slate-500">Penjelasan mekanisme infeksi dan faktor yang memicu kerentanan tubuh</p>
+                    <div class="space-y-1">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">Health Report Card</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium leading-normal">Evaluasi Parameter Klinis Pernapasan Anda</p>
                     </div>
                 </div>
 
-                @if ($disease->pathogenesis_overview)
-                    <div class="p-4 rounded-2xl bg-teal-50/50 border border-teal-100 text-xs sm:text-sm text-slate-700 leading-relaxed mb-6">
-                        {{ $disease->pathogenesis_overview }}
-                    </div>
-                @endif
+                <!-- Structured Metric Rows (Spacing Y Lega Antar Baris & Antar Teks) -->
+                <div class="divide-y divide-slate-100 text-sm">
+                    
+                    <!-- Row 1: Tingkat Kecocokan Gejala -->
+                    <div class="py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-800 block text-sm sm:text-base leading-snug">Kecocokan Gejala</span>
+                                <span class="text-xs sm:text-sm text-slate-400 block leading-normal">Tingkat indikasi klinis dengan database</span>
+                            </div>
+                        </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Cara Masuknya Kuman -->
-                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-teal-500"></span>
-                            Cara Masuknya Patogen / Kuman
-                        </h3>
-                        <ul class="space-y-2.5 text-xs text-slate-600">
-                            @if ($disease->pathogenesis_causes)
-                                @foreach ($disease->pathogenesis_causes as $cause)
-                                    <li class="flex items-start gap-2">
-                                        <span class="text-teal-600 font-bold shrink-0">&bull;</span>
-                                        <span>{{ $cause }}</span>
-                                    </li>
-                                @endforeach
-                            @else
-                                <li class="text-slate-500">Terhirup percikan cairan napas (droplet) atau kontak permukaan benda umum.</li>
-                            @endif
-                        </ul>
+                        <!-- Circular Rating Dots + Percentage -->
+                        <div class="flex items-center gap-4 self-end sm:self-auto pt-1 sm:pt-0">
+                            <div class="flex items-center gap-1.5" title="{{ $topResult->confidence_score }}%">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <span class="w-4 h-4 rounded-full border-2 {{ $i <= $scoreDots ? 'bg-emerald-500 border-emerald-500 shadow-2xs' : 'bg-white border-slate-300' }}"></span>
+                                @endfor
+                            </div>
+                            <span class="text-base sm:text-lg font-black text-[#0F5144] min-w-[55px] text-right font-mono">
+                                {{ $topResult->confidence_score }}%
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Faktor Kerentanan Tubuh -->
-                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                            Faktor Kerentanan Daya Tahan Tubuh
-                        </h3>
-                        <ul class="space-y-2.5 text-xs text-slate-600">
-                            @if ($disease->pathogenesis_risk_factors)
-                                @foreach ($disease->pathogenesis_risk_factors as $factor)
-                                    <li class="flex items-start gap-2">
-                                        <span class="text-amber-600 font-bold shrink-0">&bull;</span>
-                                        <span>{{ $factor }}</span>
-                                    </li>
-                                @endforeach
-                            @else
-                                <li class="text-slate-500">Kelelahan fisik, stres, kurang tidur, atau paparan perubahan cuaca dan polusi udara.</li>
-                            @endif
-                        </ul>
+                    <!-- Row 2: Tingkat Risiko & Keparahan -->
+                    <div class="py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-800 block text-sm sm:text-base leading-snug">Tingkat Risiko</span>
+                                <span class="text-xs sm:text-sm text-slate-400 block leading-normal">Klasifikasi tingkat keparahan infeksi</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 self-end sm:self-auto pt-1 sm:pt-0">
+                            <div class="flex items-center gap-1.5">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <span class="w-4 h-4 rounded-full border-2 {{ $i <= $severityDots ? ($isSevere ? 'bg-rose-500 border-rose-500' : ($isModerate ? 'bg-amber-500 border-amber-500' : 'bg-emerald-500 border-emerald-500')) : 'bg-white border-slate-300' }}"></span>
+                                @endfor
+                            </div>
+                            <span class="text-xs font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider min-w-[95px] text-center {{ $isSevere ? 'bg-rose-100 text-rose-800' : ($isModerate ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-[#0F5144]') }}">
+                                Risiko {{ ucfirst($severity) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Fokus Organ Inflamasi -->
+                    <div class="py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-800 block text-sm sm:text-base leading-snug">Fokus Organ</span>
+                                <span class="text-xs sm:text-sm text-slate-400 block leading-normal" id="cardOrganCategory">Saluran Napas</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 self-end sm:self-auto pt-1 sm:pt-0">
+                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200" id="cardOrganTitle">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                {{ $primaryTargetName }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Jalur Transmisi Patogen -->
+                    <div class="py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
+                                </svg>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-800 block text-sm sm:text-base leading-snug">Jalur Penularan</span>
+                                <span class="text-xs sm:text-sm text-slate-400 block leading-normal">Rute masuk mikroorganisme</span>
+                            </div>
+                        </div>
+
+                        <span class="text-xs font-semibold text-slate-700 bg-slate-50 px-3.5 py-1.5 rounded-full border border-slate-200 self-end sm:self-auto max-w-md text-right">
+                            {{ $disease->pathogenesis_causes[0] ?? 'Droplet Udara & Kontak Langsung' }}
+                        </span>
+                    </div>
+
+                    <!-- Row 5: Rekomendasi Tindakan -->
+                    <div class="py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-[#0F5144] flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-800 block text-sm sm:text-base leading-snug">Tindakan Medis</span>
+                                <span class="text-xs sm:text-sm text-slate-400 block leading-normal">Rekomendasi langkah perawatan</span>
+                            </div>
+                        </div>
+
+                        <span class="text-xs font-bold px-3.5 py-1.5 rounded-full border self-end sm:self-auto {{ $isSevere ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-[#0F5144] border-emerald-200' }}">
+                            {{ $isSevere ? 'Pemeriksaan Klinis di Faskes' : 'Perawatan Mandiri di Rumah' }}
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- Anjuran & Peringatan Mini Chips Bar (Dengan Spacing Lega) -->
+                <div class="mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-xs">
+                        <div class="font-bold text-[#0F5144] flex items-center gap-2 mb-2">
+                            <span class="w-4 h-4 rounded-full bg-emerald-200 text-[#0F5144] flex items-center justify-center text-[10px] font-black">✓</span>
+                            <span class="text-xs sm:text-sm">Anjuran Perawatan Utama:</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
+                            {{ $disease->recovery_tips[0] ?? 'Istirahat cukup 7-8 jam dan perbanyak hidrasi air hangat.' }}
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-100 text-xs">
+                        <div class="font-bold text-rose-800 flex items-center gap-2 mb-2">
+                            <span class="w-4 h-4 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center text-[10px] font-black">!</span>
+                            <span class="text-xs sm:text-sm">Segera ke Faskes Bila:</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
+                            {{ $disease->red_flags[0] ?? 'Napas terasa sesak berat atau demam tinggi persisten >39°C.' }}
+                        </p>
                     </div>
                 </div>
+
             </div>
 
-            <!-- Grid 2 Kolom: Panduan Mandiri vs Tanda Bahaya -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <!-- Tips Pemulihan Mandiri -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-                            <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
-                                &check;
-                            </div>
-                            <h3 class="text-base font-bold text-slate-900">Panduan Perawatan Mandiri di Rumah</h3>
-                        </div>
-                        <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
-                            @if ($disease->recovery_tips)
-                                @foreach ($disease->recovery_tips as $tip)
-                                    <li class="flex items-start gap-2.5">
-                                        <span class="text-emerald-500 font-bold mt-0.5">&check;</span>
-                                        <span>{{ $tip }}</span>
-                                    </li>
-                                @endforeach
-                            @else
-                                <li>Istirahat cukup 7-8 jam per hari dan perbanyak minum air hangat.</li>
-                                <li>Hindari makanan berminyak berlebihan dan paparan asap rokok.</li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Tanda Bahaya (Red Flags) -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-rose-200/80 bg-rose-50/20 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-rose-100">
-                            <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm">
-                                !
-                            </div>
-                            <h3 class="text-base font-bold text-slate-900">Tanda Bahaya (Red Flags)</h3>
-                        </div>
-                        <p class="text-xs text-rose-700 mb-3 font-semibold">Segera kunjungi Faskes / IGD jika muncul tanda berikut:</p>
-                        <ul class="space-y-3 text-xs sm:text-sm text-slate-700">
-                            @if ($disease->red_flags)
-                                @foreach ($disease->red_flags as $flag)
-                                    <li class="flex items-start gap-2.5 text-rose-900">
-                                        <span class="text-rose-500 font-bold mt-0.5">&#x26A0;</span>
-                                        <span>{{ $flag }}</span>
-                                    </li>
-                                @endforeach
-                            @else
-                                <li>Napas sangat cepat atau terasa sesak berat hingga bibir membiru.</li>
-                                <li>Demam tinggi lebih dari 39°C yang tidak turun dengan pereda demam.</li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kemungkinan Kondisi Lainnya (Secondary Assessments) -->
+            <!-- Kemungkinan Kondisi Lainnya (Minimalist Pill Strip) -->
             @if ($secondaryResults->isNotEmpty())
-                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 mb-8">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Kemungkinan Kondisi Lainnya yang Terdeteksi:</h3>
-                    <div class="space-y-3">
-                        @foreach ($secondaryResults as $sec)
-                            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm">
-                                <div>
-                                    <span class="font-bold text-slate-900 block">{{ $sec->disease->name }}</span>
-                                    <span class="text-slate-500 text-xs">{{ $sec->reasoning }}</span>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs mb-8">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Kemungkinan Kondisi Lainnya</span>
+                        <span class="text-xs text-slate-400">Diferensial sekunder</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                        @foreach ($secondaryResults->take(3) as $sec)
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs flex items-center justify-between gap-2">
+                                <div class="truncate">
+                                    <span class="font-bold text-slate-800 block truncate">{{ $sec->disease->name }}</span>
+                                    <span class="text-[10px] text-slate-400">{{ $sec->disease->severity_level ?? 'Ringan' }}</span>
                                 </div>
-                                <span class="font-mono font-bold text-slate-600 shrink-0 ml-4">
+                                <span class="font-mono font-bold text-slate-700 shrink-0 px-2 py-0.5 rounded bg-white border border-slate-200">
                                     {{ $sec->confidence_score }}%
                                 </span>
                             </div>
@@ -464,29 +360,123 @@
                 </div>
             @endif
 
-            <!-- Rujukan Faskes & Telemedika Call to Action -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-teal-950 rounded-3xl p-8 sm:p-10 text-white shadow-xl mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                    <div class="md:col-span-8 space-y-3">
-                        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Langkah Rujukan Lanjutan</span>
-                        <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Perlu Pemeriksaan Klinis Lebih Lanjut?</h3>
-                        <p class="text-sm text-slate-300 leading-relaxed max-w-xl">
-                            Temukan rumah sakit, puskesmas, atau klinik terdekat berdasarkan lokasi Anda saat ini, atau langsung konsultasi dengan dokter spesialis secara online.
-                        </p>
+
+            <!-- Langkah Rujukan Lanjutan: Faskes Terdekat & Telemedika Halodoc (Compact Card Design) -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-slate-200/80">
+                    <div>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#0F5144] block">Langkah Rujukan Lanjutan</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900">Rekomendasi Penanganan Klinis & Konsultasi Online</h3>
                     </div>
-                    <div class="md:col-span-4 flex flex-col gap-3">
-                        <a href="{{ route('facilities.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-900 bg-emerald-400 hover:bg-emerald-300 transition shadow-lg">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span>Faskes Terdekat</span>
-                        </a>
-                        <a href="{{ route('doctors.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-slate-800 border border-slate-700 hover:bg-slate-700 transition">
-                            <span>Konsultasi Dokter Online</span>
-                        </a>
+                    <span class="text-xs text-slate-400 hidden sm:block">Akses Faskes & Telemedika</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Card 1: Faskes Fisik Terdekat (Compact Card dengan Foto Faskes) -->
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div class="flex items-start gap-3.5 mb-3">
+                            <!-- Foto Faskes -->
+                            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 border border-slate-100 shadow-2xs bg-slate-100">
+                                <img src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=300&auto=format&fit=crop&q=80" 
+                                     alt="Foto Fasilitas Kesehatan" 
+                                     class="w-full h-full object-cover">
+                                @if (!empty($nearestFacility['distance_km']))
+                                    <span class="absolute bottom-1 left-1 bg-slate-900/80 backdrop-blur-xs text-emerald-300 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                                        {{ $nearestFacility['distance_km'] }} km
+                                    </span>
+                                @endif
+                            </div>
+
+                            <!-- Info Faskes -->
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 mb-1">
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-[#0F5144] border border-emerald-100">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        {{ $nearestFacility['type'] ?? 'Fasilitas Kesehatan' }}
+                                    </span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900 leading-snug truncate" title="{{ $nearestFacility['name'] ?? 'RSUP Persahabatan' }}">
+                                    {{ $nearestFacility['name'] ?? 'RSUP Persahabatan' }}
+                                </h4>
+                                <p class="text-xs text-slate-500 line-clamp-2 mt-1 leading-normal">
+                                    {{ $nearestFacility['address'] ?? 'Dekat lokasi koordinat Anda' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Aksi Faskes -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <a href="{{ $nearestFacility['google_maps_url'] ?? route('facilities.index') }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-900 bg-emerald-400 hover:bg-emerald-300 transition shadow-2xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                <span>Rute Google Maps</span>
+                            </a>
+                            <a href="{{ route('facilities.index') }}" class="text-[11px] font-semibold text-slate-500 hover:text-[#0F5144] transition">
+                                Cari Faskes Lain &rarr;
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Halodoc Telemedicine (Compact Specialist Deep Link Card) -->
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div class="flex items-start gap-3.5 mb-3">
+                            <!-- Foto Dokter Spesialis -->
+                            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 border border-slate-100 shadow-2xs bg-slate-100">
+                                <img src="{{ $specialistCategory['image'] ?? 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80' }}" 
+                                     alt="Foto Dokter Spesialis Halodoc" 
+                                     class="w-full h-full object-cover">
+                                <span class="absolute bottom-1 right-1 bg-slate-900/80 backdrop-blur-xs text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    Online
+                                </span>
+                            </div>
+
+                            <!-- Info Spesialis -->
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 mb-1">
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-100">
+                                        Telemedika &bull; Halodoc
+                                    </span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900 leading-snug truncate" title="{{ $specialistCategory['title'] ?? 'Dokter Spesialis' }}">
+                                    {{ $specialistCategory['title'] ?? 'Dokter Spesialis THT / Paru' }}
+                                </h4>
+                                <p class="text-xs text-emerald-700 font-semibold mt-0.5">
+                                    {{ $specialistCategory['specialty'] ?? 'Konsultasi Spesialis' }}
+                                </p>
+                                <p class="text-[11px] text-slate-500 line-clamp-2 mt-1 leading-normal">
+                                    {{ $specialistCategory['description'] ?? 'Konsultasi online via chat & video call langsung di Halodoc.' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Aksi Deep Link Spesialis -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <a href="{{ $specialistCategory['url'] ?? 'https://www.halodoc.com/tanya-dokter/kategori/kesehatan-paru' }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition shadow-2xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                <span>Pilih {{ $specialistCategory['title'] ?? 'Dokter Spesialis' }}</span>
+                            </a>
+                            @if (!empty($specialistCategory['alternate_url']))
+                                <a href="{{ $specialistCategory['alternate_url'] }}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition truncate">
+                                    Opsi {{ $specialistCategory['alternate_title'] }} &rarr;
+                                </a>
+                            @else
+                                <a href="https://www.halodoc.com/tanya-dokter" target="_blank" rel="noopener noreferrer" class="text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition">
+                                    Kategori Lain &rarr;
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
+            </div>
+
+
+            <!-- Disclaimer Bawah Minimalis -->
+            <div class="text-center text-xs text-slate-400 py-1">
+                <p>⚠️ <strong>Pemberitahuan:</strong> Hasil skrining ini adalah instrumen asesmen risiko awal berdasarkan referensi klinis ISPA, bukan pengganti diagnosis langsung dokter.</p>
             </div>
         @endif
 
@@ -498,201 +488,72 @@
 <script>
     const primaryInitialTarget = "{{ $primaryTarget ?? 'lungs' }}";
 
-    const organData = {
+    const cleanOrganCoordinates = {
         nasal: {
+            title: 'Rongga Hidung & Sinus',
             category: 'Saluran Napas Atas',
-            title: 'Rongga Hidung & Sinus (Cavum Nasi)',
-            description: 'Gerbang utama sistem respirasi yang berfungsi menyaring partikel debu/kuman dengan silia, menghangatkan suhu udara, dan menghasilkan lendir protektif.',
-            symptoms: 'Hidung tersumbat, bersin-bersin, rinorea (ingus encer/kental), daya penciuman menurun.',
-            pathology: 'Invasi virus mengiritasi epitel mukosa, memicu vasodilatasi kapiler lokal dan hipersekresi lendir (pilek).',
-            pointer: { x: 180, y: 65 },
-            elementIds: ['shape_nasal'],
-            badgeClass: 'bg-teal-100 text-teal-800'
+            pointer: { x: 180, y: 75 }
         },
         pharynx: {
+            title: 'Faring & Amandel',
             category: 'Saluran Napas Atas',
-            title: 'Faring & Amandel (Pharynx & Tonsils)',
-            description: 'Saluran persimpangan antara jalur pernapasan dan pencernaan, kaya akan jaringan limfoid pelindung tubuh dari patogen yang tertelan atau terhirup.',
-            symptoms: 'Nyeri hebat saat menelan (odinofagia), tenggorokan terasa kering/terbakar, suara serak.',
-            pathology: 'Kuman melekat pada sel epitel faring, memicu pelepasan histamin dan bradikinin yang merangsang reseptor nyeri.',
-            pointer: { x: 180, y: 100 },
-            elementIds: ['shape_pharynx'],
-            badgeClass: 'bg-rose-100 text-rose-800'
-        },
-        trachea: {
-            category: 'Saluran Napas Bawah (Peralihan)',
-            title: 'Trakea (Batang Tenggorok)',
-            description: 'Saluran silinder berlapis cincin tulang rawan yang mengalirkan udara bersih ke percabangan bronkus dengan eskalator mukosilia.',
-            symptoms: 'Batuk kering menghentak di dada atas, rasa gatal/panas di pangkal leher bagian bawah.',
-            pathology: 'Epitel bersilia mengalami iritasi akut, memicu refleks saraf batuk berulang kali untuk proteksi mekanis.',
-            pointer: { x: 180, y: 138 },
-            elementIds: ['shape_trachea'],
-            badgeClass: 'bg-amber-100 text-amber-800'
+            pointer: { x: 180, y: 110 }
         },
         bronchi: {
+            title: 'Percabangan Bronkus',
             category: 'Saluran Napas Bawah',
-            title: 'Percabangan Bronkus (Bronchial Tree)',
-            description: 'Pipa saluran udara yang membelah ke paru kanan dan kiri, mendistribusikan udara hingga ke percabangan bronkiolus.',
-            symptoms: 'Batuk berdahak kental, rasa sesak di dada tengah, suara napas mendesing (mengi/wheezing).',
-            pathology: 'Reaksi inflamasi memicu pembengkakan mukosa bronkus dan hipertrofi kelenjar penghasil dahak kental.',
-            pointer: { x: 145, y: 195 },
-            elementIds: ['shape_bronchi_1', 'shape_bronchi_2', 'shape_bronchi_3', 'shape_bronchi_4', 'shape_bronchi_5', 'shape_bronchi_6'],
-            badgeClass: 'bg-amber-100 text-amber-800'
+            pointer: { x: 160, y: 155 }
         },
         lungs: {
-            category: 'Saluran Napas Bawah (Parenkim)',
-            title: 'Paru-Paru (Parenkim Pulmo)',
-            description: 'Organ vital spons elastis tempat berlangsungnya ekspansi toraks dan proses pertukaran oksigen (O2) serta karbon dioksida (CO2).',
-            symptoms: 'Napas pendek saat bergerak, dada terasa tertekan, rasa cepat lelah.',
-            pathology: 'Penurunan kapasitas vital akibat infiltrasi sel-sel inflamasi pada parenkim paru.',
-            pointer: { x: 235, y: 260 },
-            elementIds: ['shape_lung_right', 'shape_lung_left'],
-            badgeClass: 'bg-sky-100 text-sky-800'
+            title: 'Paru-Paru (Lobus Pulmo)',
+            category: 'Saluran Napas Bawah',
+            pointer: { x: 230, y: 230 }
         },
         alveoli: {
-            category: 'Saluran Napas Bawah (Mikroskopis)',
-            title: 'Kantung Udara Alveolus (Alveoli)',
-            description: 'Jutaan kantung mikro berdinding tipis terbungkus kapiler darah, tempat difusi molekul oksigen ke hemoglobin darah.',
-            symptoms: 'Sesak napas berat, laju respirasi cepat, demam tinggi menggigil, ronkhi basah pada auskultasi.',
-            pathology: 'Rongga kantung alveoli terisi cairan eksudat radang/nanah, menghalangi difusi oksigen (kondisi khas Pneumonia).',
-            pointer: { x: 220, y: 320 },
-            elementIds: ['shape_alveoli_1', 'shape_alveoli_2', 'shape_alveoli_3', 'shape_alveoli_4'],
-            badgeClass: 'bg-rose-100 text-rose-800'
+            title: 'Kantung Udara Alveolus',
+            category: 'Mikroskopis Respirasi',
+            pointer: { x: 220, y: 280 }
         }
     };
 
-    function selectOrgan(key) {
-        const data = organData[key];
-        if (!data) return;
+    function selectCleanOrgan(key) {
+        const organ = cleanOrganCoordinates[key];
+        if (!organ) return;
 
-        // 1. Update text di info panel
-        document.getElementById('organCategoryBadge').textContent = data.category;
-        document.getElementById('organTitle').textContent = data.title;
-        document.getElementById('organDescription').textContent = data.description;
-        document.getElementById('organSymptoms').textContent = data.symptoms;
-        document.getElementById('organPathology').textContent = data.pathology;
-
-        // 2. Update Status Badge
-        const statusBadge = document.getElementById('organStatusBadge');
-        if (key === primaryInitialTarget) {
-            statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-200';
-            statusBadge.textContent = '🔥 Fokus Inflamasi Utama Skrining';
-        } else {
-            statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-slate-200 text-slate-700';
-            statusBadge.textContent = 'Struktur Terhubung';
+        // Update Text inside the Health Report Card Row
+        const cardTitle = document.getElementById('cardOrganTitle');
+        const cardCategory = document.getElementById('cardOrganCategory');
+        if (cardTitle) {
+            cardTitle.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> ${organ.title}`;
+        }
+        if (cardCategory) {
+            cardCategory.textContent = organ.category;
         }
 
-        // 3. Update active tab visual
-        document.querySelectorAll('.organ-tab').forEach(tab => {
-            tab.classList.remove('bg-white', 'text-emerald-700', 'shadow-xs', 'font-bold');
-            tab.classList.add('text-slate-600', 'hover:text-slate-900');
-        });
-        const activeTab = document.getElementById('tab_' + key);
-        if (activeTab) {
-            activeTab.classList.remove('text-slate-600', 'hover:text-slate-900');
-            activeTab.classList.add('bg-white', 'text-emerald-700', 'shadow-xs', 'font-bold');
-        }
-
-        // 4. Update Pointer Animation
-        const pointerTarget = document.getElementById('pointerTarget');
-        const pointerCore = document.getElementById('pointerCore');
+        // Update Pointer Pin in Silhouette
+        const pointerTarget = document.getElementById('cleanPointerTarget');
+        const pointerCore = document.getElementById('cleanPointerCore');
         if (pointerTarget && pointerCore) {
-            pointerTarget.setAttribute('cx', data.pointer.x);
-            pointerTarget.setAttribute('cy', data.pointer.y);
-            pointerCore.setAttribute('cx', data.pointer.x);
-            pointerCore.setAttribute('cy', data.pointer.y);
+            pointerTarget.setAttribute('cx', organ.pointer.x);
+            pointerTarget.setAttribute('cy', organ.pointer.y);
+            pointerCore.setAttribute('cx', organ.pointer.x);
+            pointerCore.setAttribute('cy', organ.pointer.y);
         }
 
-        // 5. Highlight SVG Elements
-        resetSvgHighlights();
-
-        data.elementIds.forEach(elemId => {
-            const el = document.getElementById(elemId);
-            if (el) {
-                el.setAttribute('stroke', '#f43f5e');
-                el.setAttribute('stroke-width', '3.5');
-                if (el.tagName.toLowerCase() === 'path' && (elemId === 'shape_lung_right' || elemId === 'shape_lung_left')) {
-                    el.setAttribute('fill', 'url(#grad-lung-inflamed)');
-                    el.setAttribute('filter', 'url(#glow-moderate)');
-                } else if (el.tagName.toLowerCase() === 'circle') {
-                    el.setAttribute('fill', '#f43f5e');
-                    el.setAttribute('fill-opacity', '0.8');
-                } else if (el.tagName.toLowerCase() === 'rect' || (el.tagName.toLowerCase() === 'path' && elemId.includes('pharynx'))) {
-                    el.setAttribute('fill', '#f43f5e');
-                    el.setAttribute('fill-opacity', '0.6');
-                    el.setAttribute('filter', 'url(#glow-moderate)');
-                }
-            }
+        // Update button tabs style
+        document.querySelectorAll('.clean-tab').forEach(tab => {
+            tab.classList.remove('bg-[#0F5144]', 'text-white');
+            tab.classList.add('text-slate-500');
         });
+        const activeBtn = document.getElementById('btn_' + key);
+        if (activeBtn) {
+            activeBtn.classList.remove('text-slate-500');
+            activeBtn.classList.add('bg-[#0F5144]', 'text-white');
+        }
     }
 
-    function resetSvgHighlights() {
-        // Reset nasal
-        const nasal = document.getElementById('shape_nasal');
-        if (nasal) {
-            nasal.setAttribute('stroke', '#38bdf8');
-            nasal.setAttribute('stroke-width', '2');
-            nasal.setAttribute('fill', '#0284c7');
-            nasal.setAttribute('fill-opacity', '0.4');
-            nasal.removeAttribute('filter');
-        }
-
-        // Reset pharynx
-        const pharynx = document.getElementById('shape_pharynx');
-        if (pharynx) {
-            pharynx.setAttribute('stroke', '#38bdf8');
-            pharynx.setAttribute('stroke-width', '2');
-            pharynx.setAttribute('fill', '#0284c7');
-            pharynx.setAttribute('fill-opacity', '0.4');
-            pharynx.removeAttribute('filter');
-        }
-
-        // Reset trachea
-        const trachea = document.getElementById('shape_trachea');
-        if (trachea) {
-            trachea.setAttribute('stroke', '#38bdf8');
-            trachea.setAttribute('stroke-width', '2');
-            trachea.setAttribute('fill', '#0284c7');
-            trachea.setAttribute('fill-opacity', '0.4');
-            trachea.removeAttribute('filter');
-        }
-
-        // Reset lungs
-        ['shape_lung_right', 'shape_lung_left'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.setAttribute('stroke', '#38bdf8');
-                el.setAttribute('stroke-width', '2');
-                el.setAttribute('fill', 'url(#grad-lung-normal)');
-                el.removeAttribute('filter');
-            }
-        });
-
-        // Reset bronchi
-        ['shape_bronchi_1', 'shape_bronchi_2', 'shape_bronchi_3', 'shape_bronchi_4', 'shape_bronchi_5', 'shape_bronchi_6'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.setAttribute('stroke', '#38bdf8');
-                el.setAttribute('stroke-width', id.includes('1') || id.includes('4') ? '4.5' : (id.includes('2') || id.includes('5') ? '3' : '2.5'));
-                el.removeAttribute('filter');
-            }
-        });
-
-        // Reset alveoli
-        ['shape_alveoli_1', 'shape_alveoli_2', 'shape_alveoli_3', 'shape_alveoli_4'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.setAttribute('stroke', '#38bdf8');
-                el.setAttribute('stroke-width', '2');
-                el.setAttribute('fill', '#38bdf8');
-                el.setAttribute('fill-opacity', '0.4');
-            }
-        });
-    }
-
-    // Auto-select on page load
     document.addEventListener('DOMContentLoaded', () => {
-        selectOrgan(primaryInitialTarget);
+        selectCleanOrgan(primaryInitialTarget);
     });
 </script>
 @endpush
