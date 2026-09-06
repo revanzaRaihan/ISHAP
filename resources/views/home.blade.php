@@ -61,6 +61,7 @@
                 <div class="lg:col-span-5">
                     <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
                         <!-- Header -->
+                        <!-- Header Kartu dengan Link Peta Interaktif -->
                         <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                             <div class="flex items-center gap-2">
                                 <span id="aqi-indicator"
@@ -68,17 +69,27 @@
                                 <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pemantauan Kualitas
                                     Udara</span>
                             </div>
-                            <div
-                                class="flex items-center gap-1.5 text-xs text-slate-500 font-medium bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
-                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+
+                            <!-- Link Peta AQI (Klik untuk membuka peta full) -->
+                            <a href="https://aqicn.org/map/world/" target="_blank" rel="noopener noreferrer"
+                                title="Klik untuk melihat peta AQI lengkap"
+                                class="flex items-center gap-1.5 text-xs text-slate-600 font-medium bg-slate-50 hover:bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 transition-colors group cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0F5144] transition-colors"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                <span id="aqi-location">Mendeteksi lokasi...</span>
-                            </div>
+                                <span id="aqi-location" class="group-hover:text-slate-900 group-hover:underline">Mendeteksi
+                                    lokasi...</span>
+                                <!-- Ikon Eksternal Kecil -->
+                                <svg class="w-3 h-3 text-slate-400 group-hover:text-[#0F5144]" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
                         </div>
 
                         <!-- Body Main Info -->
@@ -148,90 +159,6 @@
                         </div>
                     </div>
                 </div>
-
-                @push('scripts')
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            const elLocation = document.getElementById("aqi-location");
-                            const elValue = document.getElementById("aqi-value");
-                            const elStatus = document.getElementById("aqi-status");
-                            const elPm25 = document.getElementById("aqi-pm25");
-                            const elPm10 = document.getElementById("aqi-pm10");
-                            const elRecommendation = document.getElementById("aqi-recommendation");
-                            const elIndicator = document.getElementById("aqi-indicator");
-
-                            function setEmptyState(msg) {
-                                elLocation.textContent = "Akses Lokasi Ditolak";
-                                elValue.textContent = "-";
-                                elStatus.textContent = "Tidak Ada Data";
-                                elStatus.className =
-                                    "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200";
-                                elPm25.textContent = "-";
-                                elPm10.textContent = "-";
-                                elRecommendation.textContent = msg ||
-                                    "Izinkan akses lokasi pada browser Anda untuk melihat pemantauan indeks kualitas udara setempat.";
-                                elIndicator.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
-                            }
-
-                            if ("geolocation" in navigator) {
-                                navigator.geolocation.getCurrentPosition(
-                                    async (pos) => {
-                                            try {
-                                                const res = await fetch(
-                                                    `/api/aqi?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
-                                                const json = await res.json();
-
-                                                if (json.success && json.data) {
-                                                    const data = json.data;
-                                                    const aqi = data.aqi;
-
-                                                    elLocation.textContent = data.city.name || "Lokasi Terdeteksi";
-                                                    elValue.textContent = aqi;
-                                                    elPm25.textContent = data.iaqi?.pm25?.v ?? "-";
-                                                    elPm10.textContent = data.iaqi?.pm10?.v ?? "-";
-
-                                                    // Update Status & Colors
-                                                    if (aqi <= 50) {
-                                                        elStatus.textContent = "Baik";
-                                                        elStatus.className =
-                                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200";
-                                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-600";
-                                                        elRecommendation.textContent =
-                                                            "Kualitas udara sangat baik. Aman untuk beraktivitas di luar ruangan tanpa masker.";
-                                                    } else if (aqi <= 100) {
-                                                        elStatus.textContent = "Sedang";
-                                                        elStatus.className =
-                                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-900 border border-yellow-200";
-                                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-yellow-500";
-                                                        elRecommendation.textContent =
-                                                            "Kualitas udara relatif aman. Kelompok sensitif disarankan mengurangi aktivitas luar ruangan berlebih.";
-                                                    } else {
-                                                        elStatus.textContent = "Tidak Sehat";
-                                                        elStatus.className =
-                                                            "inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-900 border border-rose-200";
-                                                        elIndicator.className = "w-2.5 h-2.5 rounded-full bg-rose-600";
-                                                        elRecommendation.textContent =
-                                                            "Gunakan masker medis saat beraktivitas di luar rumah untuk mencegah risiko iritasi saluran pernapasan.";
-                                                    }
-                                                } else {
-                                                    setEmptyState("Gagal mengambil data dari stasiun WAQI.");
-                                                }
-                                            } catch (e) {
-                                                setEmptyState("Koneksi server terganggu.");
-                                            }
-                                        },
-                                        () => setEmptyState("Akses lokasi tidak diizinkan oleh pengguna."), {
-                                            timeout: 8000
-                                        }
-                                );
-                            } else {
-                                setEmptyState("Browser tidak mendukung geolocation.");
-                            }
-                        });
-                    </script>
-                @endpush
-
-
             </div>
         </div>
     </section>
@@ -249,7 +176,7 @@
                 <div class="bg-white p-6 rounded border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-3 mb-3">
                         <span
-                            class="w-7 h-7 rounded bg-slate-100 text-slate-800 font-bold text-xs flex items-center justify-center border border-slate-300">1</span>
+                            class="w-7 h-7 rounded bg-emerald-950 text-white font-bold text-xs flex items-center justify-center">1</span>
                         <div>
                             <h4 class="text-base font-bold text-slate-900">ISPA Saluran Napas Atas</h4>
                             <span class="text-[11px] font-medium text-slate-600">Umumnya Ringan (Hidung, Faring,
@@ -325,7 +252,7 @@
                 </div>
             </div>
 
-            <!-- Banner Aksi Bawah Minimalis -->
+            
             <div
                 class="mt-8 p-6 rounded border border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
@@ -381,7 +308,7 @@
                                     elPm25.textContent = data.iaqi?.pm25?.v ?? "-";
                                     elPm10.textContent = data.iaqi?.pm10?.v ?? "-";
 
-                                    
+
                                     if (aqi <= 50) {
                                         elStatus.textContent = "Baik";
                                         elStatus.className =

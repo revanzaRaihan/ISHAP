@@ -48,4 +48,16 @@ return [
         'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
     ],
 
+    'waqi' => [
+    'token' => env('WAQI_API_TOKEN'),
+],
+
+
+
+    'anything_llm' => [
+        'url' => env('ANYTHING_LLM_URL'),
+        'key' => env('ANYTHING_LLM_API_KEY'),
+        'workspace' => env('ANYTHING_LLM_WORKSPACE'),
+    ],
+
 ];
