@@ -19,7 +19,13 @@
                 </svg>
                 <span>Skrining Ulang</span>
             </a>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button type="button" onclick="openDisclaimerModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-amber-200 bg-amber-50/90 text-amber-800 text-xs font-bold hover:bg-amber-100 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span>Disclaimer</span>
+                </button>
                 <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-slate-200 bg-white/90 backdrop-blur-sm text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition">
                     <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -104,7 +110,7 @@
 
                         <!-- Reported Symptom Chips -->
                         <div class="pt-2 flex flex-wrap items-center gap-1.5">
-                            <span class="text-[11px] font-bold text-slate-400 mr-1">Gejala Terdeteksi:</span>
+                            <!-- <span class="text-[11px] font-bold text-slate-400 mr-1">Gejala Terdeteksi:</span> -->
                             @foreach ($session->symptoms as $sym)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -476,10 +482,88 @@
 
             <!-- Disclaimer Bawah Minimalis -->
             <div class="text-center text-xs text-slate-400 py-1">
-                <p>⚠️ <strong>Pemberitahuan:</strong> Hasil skrining ini adalah instrumen asesmen risiko awal berdasarkan referensi klinis ISPA, bukan pengganti diagnosis langsung dokter.</p>
+                <p>⚠️ <strong>Pemberitahuan:</strong> Hasil skrining ini adalah instrumen asesmen risiko awal berdasarkan referensi klinis ISPA, bukan pengganti diagnosis langsung dokter. <button type="button" onclick="openDisclaimerModal()" class="text-[#0F5144] underline font-semibold hover:text-emerald-700 cursor-pointer ml-1">Baca Disclaimer Medis Lengkap</button></p>
             </div>
         @endif
 
+    </div>
+
+    <!-- Modal Disclaimer Medis -->
+    <div id="disclaimerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 transition-all duration-300 opacity-0 pointer-events-none print:hidden" aria-modal="true" role="dialog" aria-labelledby="disclaimerModalTitle">
+        <!-- Backdrop -->
+        <div id="disclaimerBackdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300" onclick="closeDisclaimerModal()"></div>
+
+        <!-- Modal Card -->
+        <div id="disclaimerCard" class="relative bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-lg w-full p-6 sm:p-7 transform transition-all duration-300 scale-95 z-10 overflow-hidden">
+            <!-- Decorative header accent -->
+            <div class="absolute -top-16 -right-16 w-36 h-36 bg-amber-100/60 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-emerald-100/50 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="relative">
+                <!-- Header with Icon & Close -->
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200/70 text-amber-600 flex items-center justify-center shadow-xs shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded-md">Pemberitahuan Penting</span>
+                            <h3 id="disclaimerModalTitle" class="text-lg sm:text-xl font-black text-slate-900 mt-0.5">Disclaimer & Batasan Layanan</h3>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeDisclaimerModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shrink-0" aria-label="Tutup modal">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Body Content -->
+                <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-1">
+                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                            i
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-900">Hanya Bersifat Edukasi & Informatif</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Layanan skrining mandiri ini dikembangkan murni sebagai instrumen edukasi dan panduan awal untuk mengenali pola risiko Infeksi Saluran Pernapasan Akut (ISPA).</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-100 flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                            ✕
+                        </div>
+                        <div>
+                            <p class="font-bold text-rose-950">Bukan Diagnosis Maupun Solusi Medis Pasti</p>
+                            <p class="text-xs text-rose-700 mt-0.5">Hasil dan persentase yang tertera <strong>BUKAN</strong> merupakan diagnosis klinis, bukan keputusan medis final, dan tidak dapat digunakan sebagai resep/solusi mandiri tanpa verifikasi dokter.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                            ✚
+                        </div>
+                        <div>
+                            <p class="font-bold text-emerald-950">Konsultasi Medis Langsung</p>
+                            <p class="text-xs text-emerald-700 mt-0.5">Untuk kepastian kondisi kesehatan dan penanganan lebih lanjut, selalu konsultasikan diri Anda ke dokter umum/spesialis atau fasilitas kesehatan (Puskesmas/Klinik/Rumah Sakit) terdekat.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end gap-2.5">
+                    <button type="button" onclick="closeDisclaimerModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0F5144] hover:bg-[#0B3C32] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-900/15 transition flex items-center justify-center gap-2">
+                        <span>Saya Memahami & Melanjutkan</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -552,8 +636,50 @@
         }
     }
 
+    function openDisclaimerModal() {
+        const modal = document.getElementById('disclaimerModal');
+        const card = document.getElementById('disclaimerCard');
+        if (!modal) return;
+
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+        if (card) {
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDisclaimerModal() {
+        const modal = document.getElementById('disclaimerModal');
+        const card = document.getElementById('disclaimerCard');
+        if (!modal) return;
+
+        modal.classList.remove('opacity-100', 'pointer-events-auto');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        if (card) {
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+        document.body.classList.remove('overflow-hidden');
+        sessionStorage.setItem('ishap_disclaimer_dismissed', 'true');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeDisclaimerModal();
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
         selectCleanOrgan(primaryInitialTarget);
+
+        // Munculkan modal disclaimer otomatis pada kunjungan pertama sesi ini
+        if (!sessionStorage.getItem('ishap_disclaimer_dismissed')) {
+            setTimeout(() => {
+                openDisclaimerModal();
+            }, 350);
+        }
     });
 </script>
 @endpush
