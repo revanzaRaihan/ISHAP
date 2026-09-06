@@ -11,7 +11,7 @@ use App\Http\Controllers\AqiController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - ISHAP Skrining Mandiri ISPA (Laravel MVC)
+| Web Routes - ISHAP (Intelligent Screening for Health Awareness & Prevention)
 |--------------------------------------------------------------------------
 */
 

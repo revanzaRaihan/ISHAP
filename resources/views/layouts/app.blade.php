@@ -174,7 +174,7 @@
                         <span class="text-xl font-bold text-white">ISHAP</span>
                     </div>
                     <p class="text-sm leading-relaxed text-slate-400 max-w-md mb-4">
-                        Inisiatif Skrining Mandiri Infeksi Saluran Pernapasan Akut (ISPA). Membantu masyarakat mengenali
+                        <span class="font-medium text-slate-200">Intelligent Screening for Health Awareness & Prevention</span>. Membantu masyarakat mengenali
                         dini gejala pernapasan, memahami etiologi penyakit, dan menemukan fasilitas kesehatan rujukan
                         secara cepat.
                     </p>

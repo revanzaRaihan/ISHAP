@@ -1,58 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🫁 ISHAP — Intelligent Screening for Health Awareness & Prevention
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**ISHAP (Intelligent Screening for Health Awareness & Prevention)** adalah platform web berbasis medis dan kecerdasan buatan (AI) yang dirancang untuk membantu masyarakat melakukan skrining awal risiko Infeksi Saluran Pernapasan Akut (ISPA), memahami mekanisme penyakit (*patogenesis*), serta menemukan rujukan fasilitas kesehatan dan konsultasi telemedika secara cepat dan akurat.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Skrining Mandiri Gejala Berbasis AI & Deterministik**:
+   - Ekstraksi keluhan subjektif bahasa sehari-hari dengan **Google Gemini 2.5 Flash**.
+   - Peta interaktif anatomi saluran pernapasan atas (*Upper*) dan bawah (*Lower*).
+   - Penilaian risiko klinis dengan sistem pembobotan deterministik murni (*zero hallucination*).
+2. **Health Report Card Minimalis**:
+   - Ringkasan kondisi medis utama, skor kecocokan (*confidence rate*), dan kategori keparahan.
+   - Penjelasan etiologi penyakit, faktor kerentanan tubuh, dan tanda bahaya (*red flags*).
+3. **Pencarian Faskes Real-time (OpenStreetMap)**:
+   - Menampilkan Rumah Sakit, Puskesmas, dan Klinik terdekat menggunakan OpenStreetMap Overpass API dan formula Haversine tanpa API key berbayar.
+4. **Rujukan Telemedika Terfokus (Halodoc Deep Linking)**:
+   - Mengarahkan rujukan online langsung ke kategori dokter spesialis yang sesuai (Spesialis Paru, THT, dan Anak).
+5. **Widget Kualitas Udara Real-time (AQI)**:
+   - Pemantauan indeks kualitas udara aktual dan partikel PM2.5 via Open-Meteo Air Quality API.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Dokumentasi Tech Stack Lengkap
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Daftar lengkap teknologi, pustaka, API, dan arsitektur sistem dapat dibaca di:
+👉 **[Dokumentasi Tech Stack (docs/TECH_STACK.md)](docs/TECH_STACK.md)**  
+👉 **[Bedah Direktori Kode & Alur Hubungan File (docs/ARCHITECTURE_BREAKDOWN.md)](docs/ARCHITECTURE_BREAKDOWN.md)**
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Ringkasan cepat:
+- **Backend**: Laravel 11.x (PHP 8.3 / 8.2+)
+- **Database**: Eloquent ORM, SQLite (Local Dev & Testing), Supabase (PostgreSQL Cloud)
+- **AI & NLP**: Google Gemini 2.5 Flash API (Structured JSON)
+- **Clinical Engine**: Pure Deterministic Rule-based Scoring Engine
+- **Frontend**: Laravel Blade, Tailwind CSS, Plus Jakarta Sans, Interactive SVG Anatomy
+- **Geospasial & Peta**: Leaflet.js (v1.9.4) & OpenStreetMap Overpass API
+- **Testing**: PHPUnit (Unit & Feature Tests) dengan Mocking `Http::fake`
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 💻 Panduan Instalasi Lokal
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Prasyarat
+- PHP `>= 8.2`
+- Composer
+- Node.js & NPM
 
+### 2. Kloning dan Setup Dependensi
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/revanzaRaihan/ISHAP.git
+cd ISHAP
 
-php artisan boost:install
+# Install PHP dependencies
+composer install
+
+# Install frontend dependencies
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 3. Konfigurasi Lingkungan (.env)
+Salin file `.env.example` menjadi `.env`:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Contributing
+Isi variabel penting di `.env`:
+```env
+# Google Gemini API untuk Ekstraksi Gejala AI
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Supabase (Opsional jika menggunakan sync cloud)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_key
+```
 
-## Code of Conduct
+### 4. Migrasi & Seeder Database
+```bash
+php artisan migrate:fresh --seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 5. Menjalankan Aplikasi
+```bash
+# Jalankan server Laravel
+php artisan serve
 
-## Security Vulnerabilities
+# (Opsional) Jalankan Vite jika mengembangkan asset frontend
+npm run dev
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Akses aplikasi di browser: `http://localhost:8000`.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🧪 Menjalankan Automated Tests
+
+Seluruh skenario pengujian unit dan fitur telah dilengkapi faking API eksternal sehingga dapat dijalankan kapan saja:
+```bash
+php artisan test
+```
+
+---
+
+## 📄 Lisensi
+Platform ISHAP dikembangkan untuk kepentingan edukasi, penelitian, dan inisiatif kesehatan masyarakat.
